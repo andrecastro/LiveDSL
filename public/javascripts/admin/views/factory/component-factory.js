@@ -1,0 +1,3 @@
+define(["joint"], function(joint) {
+
+});

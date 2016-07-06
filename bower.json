@@ -1,0 +1,20 @@
+{
+  "name": "test",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Andre Castro <andrecoelho03@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "dependencies": {
+    "requirejs": "^2.2.0",
+    "jquery-ui": "^1.11.4",
+    "jquery-ui-layout-latest": "^1.4.4",
+    "jointjs": "^0.9.10",
+    "lodash-amd": "^3.10.2",
+    "backbone": "1.2.1",
+    "bootstrap.ui": "^2.1.0",
+    "text": "^2.0.15"
+  }
+}
