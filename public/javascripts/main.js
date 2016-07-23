@@ -28,14 +28,18 @@ requirejs.config({
         "bootstrap-datepicker": "eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min",
         "select2": "select2/select2.min",
         "backbone" : "backbone/backbone-min",
+        "backbone-undo": "Backbone.Undo.js/Backbone.Undo",
+        "backbone-stickit": "backbone.stickit/backbone.stickit",
         "joint": "jointjs/dist/joint",
+        "geometry": "jointjs/dist/geometry",
         "jquery-ui": "jquery-ui/jquery-ui",
         "jquery-ui-touch": "jquery-ui-touch-punch/jquery.ui.touch-punch",
         "jquery-ui-layout": "jquery-ui-layout-latest/jquery.layout-latest",
-        "moment-global": "../javascripts/moment-global", // makes the moment library be visible in the global scope
+        "moment-global": "../javascripts/custom/moment-global", // makes the moment library be visible in the global scope
         "models": "/javascripts/admin/models",
         "views": "/javascripts/admin/views",
         "templates": "/javascripts/admin/templates",
+        "custom": "/javascripts/custom",
         "scripts": "/javascripts"
     },
     map: {

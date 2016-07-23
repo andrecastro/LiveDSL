@@ -1,23 +1,24 @@
-define(["backbone", "underscore", "joint"],
-    function (Backbone, _, joint) {
-
-        // Maybe this graph I will need to get it dynamically
-        // probably from the server
-        var graph = new joint.dia.Graph;
+define(["backbone", "underscore", "joint", "custom/transform", "views/factory/component-factory",
+        "views/factory/attributes-view-factory"],
+    function (Backbone, _, joint, FreeTransform, componentFactory, attributesViewFactory) {
 
         var Center = joint.dia.Paper.extend({
             el: $("#center"),
-            model: graph,
             options: _.extend(joint.dia.Paper.prototype.options, {
                 height: 2000,
                 width: 2000,
-                model: graph,
                 gridSize: 15,
                 drawGrid: { color: '#BBBBBB', thickness: 1 }
             }),
 
             render: function() {
                 var self = this;
+
+                this.on('cell:pointerdown add:cell', function(cellView) {
+                    self.renderTransform(cellView);
+                    self.renderAttributes(cellView);
+                });
+
                 this.$el.droppable({
                     accept: ".component-item",
                     drop: function(event, ui) {
@@ -26,18 +27,33 @@ define(["backbone", "underscore", "joint"],
                 });
             },
 
-            drop: function(event, ui) {
-                var localPoint = this.clientToLocalPoint({ x: ui.position.left, y: ui.position.top });
-                var rect = new joint.shapes.basic.Rect({
-                    position: { x: localPoint.x, y: localPoint.y },
-                    size: { width: 100, height: 30 },
-                    attrs: { rect: { fill: 'blue' }, text: { text: $(ui.helper).data('title'), fill: 'white' }}
-                });
+            renderView: function(cell) {
+                var renderedView = joint.dia.Paper.prototype.renderView.call(this, cell);
+                this.trigger('add:cell', renderedView);
+                return renderedView;
+            },
 
-                this.model.addCells([rect]);
+            renderTransform: function(cellView) {
+                if (cellView.model instanceof joint.dia.Link) return;
+
+                var freeTransform = new FreeTransform({ cellView: cellView });
+                freeTransform.render();
+            },
+
+            renderAttributes: function(cellView) {
+                var attributesView = attributesViewFactory(cellView);
+                $("#east-content").html(attributesView.render().el);
+            },
+
+            drop: function(event, ui) {
+                var position = this.clientToLocalPoint({ x: ui.position.left, y: ui.position.top });
+                var type = $(ui.helper).data("type");
+                var element = $(ui.helper).data("element");
+
+                var component = componentFactory(type, element, position);
+                this.model.addCells([component]);
             }
         });
-
 
         return Center;
     });

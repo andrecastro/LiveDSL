@@ -36,16 +36,27 @@
             <!-- Collapsible menu -->
             <div class="collapse navbar-collapse" id="kssMenu">
                 <ul class="nav navbar-nav">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Pages</a></li>
-                    <li><a href="#">Media</a></li>
-                    <li><a href="#">Users</a></li>
+                    <!--<li><a href="#">Dashboard</a></li>-->
+                    <!--<li><a href="#">Pages</a></li>-->
+                    <!--<li><a href="#">Media</a></li>-->
+                    <!--<li><a href="#">Users</a></li>-->
+                    <li class="navbar-icon">
+                        <a href="#" title="Undo" id="undo" onclick="return false;">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                    <li class="navbar-icon">
+                        <a href="#" title="Redo" id="redo" onclick="return false;">
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        </a>
+                    </li>
                 </ul>
+
                 <ul class="nav navbar-nav navbar-right">
                     <li class="navbar-icon">
-                        <a href="#" target="_blank" title="Open site in a new tab">
+                        <a href="#" title="Open site in a new tab">
                             <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                            <span class="visible-xs">Home</span>
+                            <span class="visible-xs" >Home</span>
                         </a>
                     </li>
                     <li class="navbar-icon">
@@ -70,10 +81,11 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="#" onClick="$('#logout').submit()" >
                                     <span class="glyphicon glyphicon-off offset-right icon-shift-down" aria-hidden="true"></span>
                                     Sign out
                                 </a>
+                                <form method="post" id="logout" action="/logout"></form>
                             </li>
                         </ul>
                     </li><!-- .dropdown -->
@@ -85,13 +97,13 @@
 
 
 <main id="main" role="main" class="site-content">
-
     <div id="center" class="ui-layout-center"></div>
 
     <div id="south" class="ui-layout-south"></div>
 
     <div id="east" class="ui-layout-east">
-        <!--<%- include partials/east.ejs %>-->
+        <div id="east-content" class="ui-layout-center"></div>
+        <div id="preview" class="ui-layout-south"></div>
     </div>
 
     <div id="west" class="ui-layout-west"></div>

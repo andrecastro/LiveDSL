@@ -1,0 +1,14 @@
+<% while(message = flash.shift()) { %>
+
+    <% if(message.type == "error") { %>
+        <div class="alert alert-block alert-danger fade in">
+            <%= message.message %>
+        </div>
+    <% } %>
+
+    <% if(message.type == "info") { %>
+        <div class="alert alert-info fade in">
+            <%= message.message %>
+        </div>
+    <% } %>
+<% } %>
