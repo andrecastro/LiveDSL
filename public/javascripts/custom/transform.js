@@ -7,7 +7,8 @@ define(["backbone", "underscore", "joint", "geometry", "text!templates/transform
 
             events: {
                 'mousedown .resize': 'startResizing',
-                'touchstart .resize': 'startResizing'
+                'touchstart .resize': 'startResizing',
+                'click .close': 'removeCell'
             },
 
             options: {
@@ -50,6 +51,10 @@ define(["backbone", "underscore", "joint", "geometry", "text!templates/transform
                 // We have to use `attr` as jQuery `data` doesn't update DOM
                 this.$el.attr('data-type', this.cell.get('type'));
                 this.update();
+            },
+
+            removeCell: function() {
+                this.cell.remove();
             },
 
             update: function () {

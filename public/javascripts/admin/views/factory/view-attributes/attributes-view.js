@@ -15,6 +15,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 this.paper.trigger("attributes:remove_others");
 
                 this.listenTo(this.paper, 'blank:pointerdown attributes:remove_others', this.remove);
+                this.listenTo(this.model, 'remove', this.remove);
             },
 
             render: function () {
@@ -43,6 +44,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 this.bindInputToNestedField("#title", "attrs", "text/text", "STRING");
                 this.bindInputToNestedField("#font-size", "attrs", "text/font-size", "STRING");
                 this.bindInputToNestedField("#font-color", "attrs", "text/fill", "STRING");
+                this.bindInputToNestedField("#description", "attrs", "text/description", "STRING");
             },
 
             renderGeometryAttributes: function () {
@@ -59,10 +61,6 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 this.bindInputToNestedField("#y", "position", "y", "NUMBER");
                 this.bindInputToNestedField("#width", "size", "width", "NUMBER");
                 this.bindInputToNestedField("#height", "size", "height", "NUMBER");
-            },
-
-            bindInputToField: function (input, filed) {
-                this.addBinding(this.model, input, filed);
             },
 
             bindInputToNestedField: function (input, filed, nestedAttribute, type) {

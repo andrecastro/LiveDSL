@@ -24,12 +24,12 @@
 
 <div class="container">
 
-    <form class="login-form" method="post" action="/users/register">
+    <form class="login-form" method="post" action="/register">
         <div class="login-wrap">
             <p class="login-img"><i class="icon_group"></i></p>
 
             <% if (flash) { %>
-                <% include ../flash.ejs %>
+                <% include partials/_flash.ejs %>
             <% } %>
 
             <div class="input-group">

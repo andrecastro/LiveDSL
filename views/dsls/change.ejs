@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet"
+          href="//fonts.googleapis.com/css?family=Titillium+Web:400,300,700&amp;subset=latin,latin-ext"/>
+    <link rel="stylesheet" href="/vendor/bootstrap.ui/dist/css/bootstrap-ui.min.css"/>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
+    <link rel="stylesheet" href="/vendor/jointjs/dist/joint.min.css"/>
+
+    <script data-main="/javascripts/main" src="/vendor/requirejs/require.js"></script>
+</head>
+
+<body class="site has-navbar-fixed-top">
+
+
+<%- include ../partials/_header.ejs %>
+
+<main id="main" role="main" class="site-content">
+    <div id="center" class="ui-layout-center"></div>
+
+    <div id="east" class="ui-layout-east">
+        <div id="east-content" class="ui-layout-center"></div>
+        <div id="preview" class="ui-layout-south"></div>
+    </div>
+
+    <div id="west" class="ui-layout-west"></div>
+</main>
+
+</body>
+
+</html>

@@ -6,8 +6,10 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var flash = require('flash');
 var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
 var mongoose = require('mongoose');
 var passport = require('passport');
+var ConnectRoles = require('connect-roles');
 var LocalStrategy = require('passport-local').Strategy;
 
 var app = express();
@@ -20,8 +22,10 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(methodOverride("_method"));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: 'secret',
     resave: false,
@@ -31,7 +35,10 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(function (req, res, next) {
+    res.locals.loggedUser = req.user;
+    next();
+});
 
 // passport config
 var User = require('./models/user');
@@ -44,19 +51,48 @@ passport.isLoggedIn = function (req, res, next) {
     if (req.isAuthenticated())
         return next();
 
-    // if they aren't redirect them to the home page
+    // save last request if it is a get
+    if (req.method == 'GET') {
+        req.session.lastPage = req.originalUrl;
+    }
+
+    // if they aren't redirect them to the login page
     req.flash('error', 'You must be authenticated to access this page!');
     res.redirect('/login');
 };
 
+// connect roles config
+var user = new ConnectRoles({
+    failureHandler: function (req, res, action) {
+        // optional function to customise code that runs when
+        // user fails authorisation
+        var accept = req.headers.accept || '';
+        res.status(403);
+        if (~accept.indexOf('html')) {
+            res.render('access-denied', {action: action});
+        } else {
+            res.send('Access Denied - You don\'t have permission to: ' + action);
+        }
+    }
+});
+
+// only admin can access admin pages
+user.use("access admin pages", function (req) {
+    return req.user.role === 'admin';
+});
+
+app.use(user.middleware());
+
+// mongoose config
 mongoose.connect('mongodb://localhost/passport_local_mongoose');
+mongoose.set('debug', true);
 
 // routes
 var routes = require('./routes/index')(passport);
-var users = require('./routes/users')(passport);
+var dsls = require('./routes/dsls')(passport, user);
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/admin/dsls', dsls);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

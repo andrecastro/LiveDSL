@@ -1,6 +1,6 @@
 define(["views/factory/view-attributes/rect-attributes-view", "views/factory/view-attributes/ellipse-attributes-view",
-    "views/factory/view-attributes/image-attributes-view"],
-    function(RectAttributesView, EllipseAttributesView, ImageAttributesView)  {
+    "views/factory/view-attributes/image-attributes-view", "views/factory/view-attributes/link-attributes-view"],
+    function(RectAttributesView, EllipseAttributesView, ImageAttributesView, LinkAttributesView)  {
 
     return function(view) {
         switch (view.model.get("type")) {
@@ -10,6 +10,8 @@ define(["views/factory/view-attributes/rect-attributes-view", "views/factory/vie
                 return new EllipseAttributesView({ cellView: view });
             case "basic.Image":
                 return new ImageAttributesView({ cellView: view });
+            case "link":
+                return new LinkAttributesView({ cellView: view });
         }
     }
 });

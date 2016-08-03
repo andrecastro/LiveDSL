@@ -30,7 +30,7 @@
             <p class="login-img"><i class="icon_lock_alt"></i></p>
 
             <% if (flash) { %>
-                <% include flash.ejs %>
+                <% include partials/_flash.ejs %>
             <% } %>
 
             <div class="input-group">
@@ -46,7 +46,7 @@
             <!--<span class="pull-right"> <a href="#"> Forgot Password?</a></span>-->
             <!--</label>-->
             <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
-            <a class="btn btn-info btn-lg btn-block" href="/users/register"> Signup</a>
+            <a class="btn btn-info btn-lg btn-block" href="/register"> Signup</a>
         </div>
     </form>
 

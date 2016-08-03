@@ -51,7 +51,7 @@ define(["backbone", "underscore", "joint", "custom/transform", "views/factory/co
                 var element = $(ui.helper).data("element");
 
                 var component = componentFactory(type, element, position);
-                this.model.addCells([component]);
+                this.model.addCell(component);
             }
         });
 
