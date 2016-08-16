@@ -8,6 +8,16 @@
     margin-top: 30px;
 }
 
+.toolbar {
+    background: black;
+}
+
+.btn-secondary { color: #ffffff; background-color: #333; border-color: #555; }
+
+.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-secondary.active, .open .dropdown-toggle.btn-secondary
+{ color: #ffffff; background-color: #888; border-color: #444; }
+
+
 /* Bootstrap */
 .navbar-primary {
     background: #242424;
@@ -37,6 +47,9 @@
     margin-bottom: 0px !important;
     cursor: all-scroll !important;
     font-size: 14px;
+    text-decoration: none;
+    width: 200px;
+    display: table-cell;
 }
 /* Component List (WEST) */
 
@@ -45,6 +58,27 @@
 .accordion-caret .panel-heading {
     background: #242424 !important;
     border-color: transparent !important;
+}
+
+.accordion-caret .panel-heading .panel-heading-row {
+    display: table-row;
+}
+
+.accordion-caret .panel-heading .accordion-toggle {
+    display: table-cell;
+    width: 300px;
+    text-decoration: none;
+}
+
+.add-link {
+    display: table-cell;
+}
+
+.add-link h4 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 14px;
+    color: blueviolet;
 }
 
 .accordion-caret .panel {
@@ -58,8 +92,14 @@
     color: white;
 }
 
-.accordion-caret .panel-body .list-group-item span {
-    margin-right: 5%;
+.accordion-caret .panel-body .list-group-item {
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    background: #333 !important;
+    color: white !important;
+    margin-bottom: 0px !important;
+    font-size: 14px;
 }
 
 .accordion-caret .panel-body .list-group-item:first-child {

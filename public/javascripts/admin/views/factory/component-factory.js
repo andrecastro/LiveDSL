@@ -1,11 +1,11 @@
 define(["views/factory/components/node-factory", "views/factory/components/link-factory"], function(nodeFactory, linkFactory) {
 
-    return function(type, element, position) {
-        switch (type) {
+    return function(model, position) {
+        switch (model.component.type) {
             case "NODE":
-                return nodeFactory(element, position);
+                return nodeFactory(model, position);
             default:
-                return linkFactory(element, position);
+                return linkFactory(model, position);
         }
     }
 });

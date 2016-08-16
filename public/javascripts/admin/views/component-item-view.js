@@ -1,13 +1,23 @@
-define(["backbone", "underscore", "models/component-item","text!templates/component-item-view.html"],
-    function(Backbone, _, ComponentItem, componentItemTemplate) {
+define(["backbone", "underscore", "text!templates/component-item-view.html"],
+    function (Backbone, _, componentItemTemplate) {
 
         return Backbone.View.extend({
-            model: ComponentItem,
             template: _.template(componentItemTemplate),
+            className: "list-group-item",
 
-            render: function() {
-                this.$el.html(this.template(this.model.toJSON()));
+            initialize: function(options) {
+                this.options = options;
+            },
+
+            render: function () {
+                this.$el.html(this.template({ model: this.getComponent(), edit: this.options.edit }));
                 return this;
+            },
+
+            getComponent: function() {
+                var component = this.model.toJSON();
+                delete component.id;
+                return component;
             }
         });
     });

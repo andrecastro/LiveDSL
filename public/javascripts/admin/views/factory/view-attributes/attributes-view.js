@@ -1,6 +1,7 @@
 define(["backbone", "underscore", "views/custom/collapse-panel-view",
-        "text!templates/attributes/geometry.html", "text!templates/attributes/text.html", "backbone-stickit"],
-    function (Backbone, _, CollapsePanelView, geometryTemplate, textTemplate) {
+        "text!templates/attributes/geometry.html", "text!templates/attributes/text.html",
+        "text!templates/attributes/component.html", "backbone-stickit"],
+    function (Backbone, _, CollapsePanelView, geometryTemplate, textTemplate, componentTemplate) {
 
         return Backbone.View.extend({
             className: "panel-group accordion-caret",
@@ -20,6 +21,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
 
             render: function () {
                 this.$el.empty();
+                this.renderComponentAttributes();
                 this.renderTextAttributes();
                 this.renderAppearance();
                 this.renderGeometryAttributes();
@@ -27,8 +29,20 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 return this;
             },
 
-            renderAppearance: function() {
-                // this method needs to be overwritten
+            renderComponentAttributes: function() {
+                var contentPanel = _.template(componentTemplate);
+                var componentAttr = new CollapsePanelView({
+                    title: "COMPONENT",
+                    id: "component",
+                    contentPanel: contentPanel()
+                });
+
+                this.$el.append(componentAttr.render().el);
+
+                this.bindInputToNestedField("#component-id", "component", "id", "STRING");
+                this.bindInputToNestedField("#component-friendly-name", "component", "friendlyName", "STRING");
+                this.bindInputToNestedField("#component-image", "component", "image", "STRING");
+                this.bindInputToNestedField("#component-description", "component", "description", "STRING");
             },
 
             renderTextAttributes: function() {
@@ -44,7 +58,10 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 this.bindInputToNestedField("#title", "attrs", "text/text", "STRING");
                 this.bindInputToNestedField("#font-size", "attrs", "text/font-size", "STRING");
                 this.bindInputToNestedField("#font-color", "attrs", "text/fill", "STRING");
-                this.bindInputToNestedField("#description", "attrs", "text/description", "STRING");
+            },
+
+            renderAppearance: function() {
+                // this method needs to be overwritten
             },
 
             renderGeometryAttributes: function () {

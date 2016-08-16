@@ -1,10 +1,19 @@
 <div class="panel-heading" role="tab">
-    <a class="accordion-toggle" role="button" data-toggle="collapse" href="#<%= id %>-content"
-       aria-expanded="true" aria-controls="collapseOne">
-        <h4 class="panel-title">
-            <%= title %>
-        </h4>
-    </a>
+    <div class="panel-heading-row">
+        <a class="accordion-toggle" role="button" data-toggle="collapse" href="#<%= id %>-content"
+           aria-expanded="true" aria-controls="collapseOne">
+            <h4 class="panel-title">
+                <%= title %>
+            </h4>
+        </a>
+        <% if (link) { %>
+        <a href="<%= link %>" class="add-link">
+            <h4 class="panel-title">
+                new
+            </h4>
+        </a>
+        <% } %>
+    </div>
 </div>
 
 <div id="<%= id %>-content" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">

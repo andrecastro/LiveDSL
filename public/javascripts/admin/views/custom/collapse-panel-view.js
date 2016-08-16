@@ -10,7 +10,7 @@ define(["backbone", "underscore", "text!templates/custom/collapse-panel-view.htm
         },
 
         render: function() {
-            this.$el.html(this.template({ title: this.options.title, id: this.options.id }));
+            this.$el.html(this.template({ title: this.options.title, id: this.options.id, link: this.options.link }));
 
             if (this.options.contentPanel instanceof Backbone.View) {
                 this.$(".panel-body").append(this.options.contentPanel.render().el);
@@ -19,7 +19,7 @@ define(["backbone", "underscore", "text!templates/custom/collapse-panel-view.htm
             }
 
             return this;
-        },
+        }
 
     });
 

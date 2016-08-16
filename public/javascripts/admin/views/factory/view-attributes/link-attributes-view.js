@@ -7,6 +7,7 @@ define(["underscore", "views/factory/view-attributes/attributes-view",
         var LinkAttributesView = AttributesView.extend({
 
             render: function() {
+                this.renderComponentAttributes();
                 this.renderConnection();
                 this.renderSource();
                 this.renderTarget();

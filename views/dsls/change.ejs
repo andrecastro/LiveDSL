@@ -5,15 +5,20 @@
 
     <link rel="stylesheet"
           href="//fonts.googleapis.com/css?family=Titillium+Web:400,300,700&amp;subset=latin,latin-ext"/>
+    <link rel="stylesheet" href="/stylesheets/pnotify.custom.min.css"/>
     <link rel="stylesheet" href="/vendor/bootstrap.ui/dist/css/bootstrap-ui.min.css"/>
-    <link rel="stylesheet" href="/stylesheets/style.css"/>
+    <link rel="stylesheet" href="/stylesheets/ionicons.min.css"/>
     <link rel="stylesheet" href="/vendor/jointjs/dist/joint.min.css"/>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
 
-    <script data-main="/javascripts/main" src="/vendor/requirejs/require.js"></script>
+    <script data-main="/javascripts/admin/init" src="/vendor/requirejs/require.js"></script>
 </head>
 
 <body class="site has-navbar-fixed-top">
 
+<script>
+    var currentDsl = '<%= dsl.id %>';
+</script>
 
 <%- include ../partials/_header.ejs %>
 

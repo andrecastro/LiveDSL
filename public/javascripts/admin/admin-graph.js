@@ -8,7 +8,6 @@ define(["underscore", "joint"], function(_, joint) {
 
             return joint.dia.Graph.prototype.addCell.call(this, cell, options);
         }
-
     });
 
     return AdminGraph;
