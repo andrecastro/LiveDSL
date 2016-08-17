@@ -37,6 +37,7 @@ requirejs.config({
         "pnotify.animate": "pnotify/dist/pnotify.animate",
         "pnotify.nonblock": "pnotify/dist/pnotify.nonblock",
         "pnotify.buttons": "pnotify/dist/pnotify.buttons",
+        "pnotify.confirm": "pnotify/dist/pnotify.confirm",
         "jquery-ui-touch": "jquery-ui-touch-punch/jquery.ui.touch-punch",
         "jquery-ui-layout": "jquery-ui-layout-latest/jquery.layout-latest",
         "moment-global": "../javascripts/custom/moment-global", // makes the moment library be visible in the global scope

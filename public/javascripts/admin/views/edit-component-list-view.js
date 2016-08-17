@@ -25,7 +25,7 @@ define(["backbone", "underscore", "views/component-item-view", "views/custom/col
             },
 
             renderView: function (componentJson, context) {
-                this.component = componentFactory(componentJson, { x: 400, y: 300 });
+                this.component = componentFactory(componentJson, { x: 100, y: 100 });
                 var components = [this.component];
 
                 var componentGroup = new ComponentItemGroup({

@@ -7,23 +7,23 @@ module.exports = function (passport, user) {
 
     router.get('/', passport.isLoggedIn, function (req, res, next) {
         Dsl.find({name: new RegExp(req.query.name, "i")}, function (err, dsls) {
-            res.render('dsls/index', { dsls: dsls, name: req.query.name });
+            res.render('dsls/index', {dsls: dsls, name: req.query.name});
         });
     });
 
     router.get('/new', passport.isLoggedIn, function (req, res, next) {
         var dsl = new Dsl();
-        res.render('dsls/new', { dsl : dsl });
+        res.render('dsls/new', {dsl: dsl});
     });
 
     router.post('/', passport.isLoggedIn, function (req, res, next) {
-        var dsl = new Dsl({ name: req.body.name, description: req.body.description });
+        var dsl = new Dsl({name: req.body.name, description: req.body.description});
 
         dsl.save(function (err) {
             if (err || !dsl) {
                 req.flash("error", "Validation error");
                 console.log(err);
-                return res.render('dsls/new', { dsl : dsl });
+                return res.render('dsls/new', {dsl: dsl});
             }
 
             req.flash("info", "Successfully saved");
@@ -32,45 +32,45 @@ module.exports = function (passport, user) {
     });
 
     router.get('/edit/:id', passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function(err, dsl) {
+        Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
                 error.status = 404;
                 return next(error);
             }
 
-            res.render('dsls/edit', { dsl : dsl });
+            res.render('dsls/edit', {dsl: dsl});
         });
     });
 
     router.get('/:id', passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function(err, dsl) {
+        Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
                 error.status = 404;
                 return next(error);
             }
 
-            res.render('dsls/change', { dsl : dsl });
+            res.render('dsls/change', {dsl: dsl});
         });
     });
 
     router.put('/:id', passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function(err, dsl) {
+        Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
                 error.status = 404;
                 return next(error);
             }
 
-            dsl.name =  req.body.name;
+            dsl.name = req.body.name;
             dsl.description = req.body.description;
 
-            dsl.save(function(err) {
+            dsl.save(function (err) {
                 if (err || !dsl) {
                     req.flash("error", "Validation error");
                     console.log(err);
-                    return res.render('dsls/edit', { dsl : dsl });
+                    return res.render('dsls/edit', {dsl: dsl});
                 }
 
                 req.flash("info", "Successfully updated");
@@ -80,14 +80,14 @@ module.exports = function (passport, user) {
     });
 
     router.delete('/:id', passport.isLoggedIn, function (req, res, next) {
-        Dsl.findByIdAndRemove(req.params.id, function(err, dsl) {
+        Dsl.findByIdAndRemove(req.params.id, function (err, dsl) {
             req.flash("info", "Successfully deleted");
             res.redirect('/admin/dsls')
         });
     });
 
     router.post("/:id/new-component", passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function(err, dsl) {
+        Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
                 error.status = 404;
@@ -96,7 +96,7 @@ module.exports = function (passport, user) {
 
             try {
                 dsl.addNewComponent(req.body.model);
-            } catch(e) {
+            } catch (e) {
                 if (e instanceof ValidationException) {
                     return res.status(400).json(e.errors);
                 } else {
@@ -109,7 +109,7 @@ module.exports = function (passport, user) {
     });
 
     router.get("/:id/components", passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function(err, dsl) {
+        Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
                 error.status = 404;
@@ -121,7 +121,7 @@ module.exports = function (passport, user) {
     });
 
     router.get("/:id/components/:componentId", passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function(err, dsl) {
+        Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
                 error.status = 404;
@@ -129,6 +129,42 @@ module.exports = function (passport, user) {
             }
 
             res.json(dsl.getComponentById(req.params.componentId));
+        });
+    });
+
+    router.put("/:id/components/:componentId", passport.isLoggedIn, function (req, res, next) {
+        Dsl.findById(req.params.id, function (err, dsl) {
+            if (err || !dsl) {
+                var error = new Error('Not Found');
+                error.status = 404;
+                return next(error);
+            }
+
+            try {
+                dsl.updateComponent(req.body.model, req.params.componentId);
+            } catch (e) {
+                if (e instanceof ValidationException) {
+                    return res.status(400).json(e.errors);
+                } else {
+                    return res.status(500);
+                }
+            }
+
+            res.sendStatus(200);
+        });
+    });
+
+    router.delete("/:id/components/:componentId", passport.isLoggedIn, function (req, res, next) {
+        Dsl.findById(req.params.id, function (err, dsl) {
+            if (err || !dsl) {
+                var error = new Error('Not Found');
+                error.status = 404;
+                return next(error);
+            }
+
+            dsl.deleteComponent(req.params.componentId);
+
+            res.sendStatus(200);
         });
     });
 

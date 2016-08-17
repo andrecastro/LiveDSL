@@ -28,7 +28,6 @@ DslSchema.methods.addNewComponent = function (component) {
 };
 
 DslSchema.methods.getComponents = function (type) {
-
     var components = this.components.map(function(component) {
         EscapeHelper.retrieveEscapedChars(component);
         return component;
@@ -44,7 +43,6 @@ DslSchema.methods.getComponents = function (type) {
 };
 
 DslSchema.methods.getComponentById = function (componentId) {
-
     var components = this.components.filter(function(component) {
         return component.component.id == componentId;
     }).map(function(component) {
@@ -54,6 +52,57 @@ DslSchema.methods.getComponentById = function (componentId) {
 
     return components[0];
 };
+
+DslSchema.methods.updateComponent = function (newComponent, componentId) {
+    validateEdit(newComponent, componentId);
+    var component = this.getComponentById(componentId);
+    var index = this.components.indexOf(component);
+
+    EscapeHelper.escapeKeys(newComponent);
+    this.components[index] = newComponent;
+
+    this.markModified('components');
+    this.save();
+};
+
+
+DslSchema.methods.deleteComponent = function (componentId) {
+    var component = this.getComponentById(componentId);
+    var index = this.components.indexOf(component);
+
+    this.components.splice(index, 1);
+    this.markModified('components');
+    this.save();
+};
+
+function validateEdit(component, componentId) {
+    if (component == null) {
+        throw new ValidationException(["Component can not be null"]);
+    }
+
+    var errors = [];
+
+    if (component.component.id != componentId) {
+        errors.push("Component id can not be changed");
+    }
+
+    if (!component.component.id || !component.component.id.trim()) {
+        errors.push("Component id is mandatory");
+    }
+
+    if (!component.component.friendlyName || !component.component.friendlyName.trim()) {
+        errors.push("Component name is mandatory");
+    }
+
+    if (!component.component.image || !component.component.image.trim()) {
+        errors.push("Component image is mandatory");
+    }
+
+    if (errors.length != 0) {
+        throw new ValidationException(errors);
+    }
+}
+
 
 function validateComponent(dsl, component) {
     if (component == null) {

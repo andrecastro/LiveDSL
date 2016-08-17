@@ -46,126 +46,97 @@ require(["/javascripts/config.js"], function () {
     });
 
     function tryDsl() {
-        require(["views/layout/center", "views/layout/west", "views/component-list-view",
+        require(["views/layout/center", "views/layout/west", "views/layout/east",  "views/component-list-view",
                 "scripts/admin/admin-graph", "scripts/admin/admin-paper", "joint", "views/toolbars/try-dsl-toolbar-view"],
-            function (Center, West, ComponentListView, AdminGraph, AdminPaper, joint, Toolbar) {
+            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, joint, Toolbar) {
                 window.graph = new joint.dia.Graph();
 
+                window.east = new East({
+                    model: window.graph,
+                    Paper: AdminPaper
+                }).render();
+
                 window.center = new Center({
-                    model: graph
+                    model: graph,
+                    Paper: AdminPaper
                 }).render();
 
                 window.west = new West({
                     listView: new ComponentListView(),
                     toolbar: new Toolbar()
                 }).render();
-
-                $("#east-content").empty();
-
-                var smallPaper = new AdminPaper({
-                    el: $("#preview"),
-                    height: 600,
-                    width: 600,
-                    gridSize: 1,
-                    model: graph
-                });
-
-                smallPaper.scale(.2);
-                smallPaper.$el.css('pointer-events', 'none');
             });
     }
 
     function newNode() {
-        require(["views/layout/center", "views/layout/west", "views/new-node-list-view",
+        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/new-node-list-view",
                 "scripts/admin/admin-graph", "scripts/admin/admin-paper", "views/toolbars/new-component-toolbar-view"],
-            function (Center, West, NodeListView, AdminGraph, AdminPaper, Toolbar) {
+            function (Center, West, East, NodeListView, AdminGraph, AdminPaper, Toolbar) {
                 window.graph = new AdminGraph();
 
+                window.east = new East({
+                    model: window.graph,
+                    Paper: AdminPaper
+                }).render();
+
                 window.center = new Center({
-                    model: graph
+                    model: graph,
+                    Paper: AdminPaper
                 }).render();
 
                 window.west = new West({
                     listView: new NodeListView(),
                     toolbar: new Toolbar()
                 }).render();
-
-                $("#east-content").empty();
-
-                var smallPaper = new AdminPaper({
-                    el: $("#preview"),
-                    height: 600,
-                    width: 600,
-                    gridSize: 1,
-                    model: graph
-                });
-
-                smallPaper.scale(.2);
-                smallPaper.$el.css('pointer-events', 'none');
             });
     }
 
     function newLink() {
-        require(["views/layout/center", "views/layout/west", "views/new-link-list-view",
+        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/new-link-list-view",
                 "scripts/admin/admin-graph", "scripts/admin/admin-paper", "views/toolbars/new-component-toolbar-view"],
-            function (Center, West, LinkListView, AdminGraph, AdminPaper, Toolbar) {
+            function (Center, West, East, LinkListView, AdminGraph, AdminPaper, Toolbar) {
                 window.graph = new AdminGraph();
 
+                window.east = new East({
+                    model: window.graph,
+                    Paper: AdminPaper
+                }).render();
+
                 window.center = new Center({
-                    model: graph
+                    model: graph,
+                    Paper: AdminPaper
                 }).render();
 
                 window.west = new West({
                     listView: new LinkListView(),
                     toolbar: new Toolbar()
                 }).render();
-
-                $("#east-content").empty();
-
-                var smallPaper = new AdminPaper({
-                    el: $("#preview"),
-                    height: 600,
-                    width: 600,
-                    gridSize: 1,
-                    model: graph
-                });
-
-                smallPaper.scale(.2);
-                smallPaper.$el.css('pointer-events', 'none');
             });
     }
 
     function editComponent(componentId) {
-        require(["views/layout/center", "views/layout/west", "views/edit-component-list-view",
-                "scripts/admin/admin-graph", "scripts/admin/admin-paper", "views/toolbars/edit-component-toolbar-view"],
-            function (Center, West, EditComponentListView, AdminGraph, AdminPaper, Toolbar) {
-                window.graph = new AdminGraph();
-
+        require(["views/layout/center", "views/layout/west",  "views/layout/east", "views/edit-component-list-view",
+                "scripts/admin/admin-graph", "scripts/admin/admin-edit-paper", "views/toolbars/edit-component-toolbar-view"],
+            function (Center, West, East, EditComponentListView, AdminGraph, AdminPaper, Toolbar) {
                 var editComponentListView = new EditComponentListView({ id: componentId });
+
+                window.graph = new AdminGraph();
+                window.east = new East({
+                    model: window.graph,
+                    Paper: AdminPaper
+                }).render();
 
                 window.west = new West({
                     listView: editComponentListView,
-                    toolbar: new Toolbar()
+                    toolbar: new Toolbar( { componentId: componentId })
                 }).render();
 
                 window.center = new Center({
-                    model: graph
+                    model: window.graph,
+                    Paper: AdminPaper
                 }).render();
 
                 window.graph.addCell(editComponentListView.getEditingComponent());
-
-                $("#east-content").empty();
-
-                var smallPaper = new AdminPaper({
-                    el: $("#preview"),
-                    height: 600,
-                    width: 600,
-                    gridSize: 1,
-                    model: graph
-                });
-
-                smallPaper.scale(.2);
-                smallPaper.$el.css('pointer-events', 'none');
             });
     }
 });

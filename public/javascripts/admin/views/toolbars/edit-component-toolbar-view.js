@@ -1,12 +1,14 @@
-define(["backbone", "underscore", "text!templates/toolbars/edit-toolbar-template.html", "jquery-ui"],
-    function (Backbone, _, toolbarTemplate) {
+define(["backbone", "underscore", "text!templates/toolbars/edit-toolbar-template.html",
+        "scripts/custom/pnotify-bootstrap"],
+    function (Backbone, _, toolbarTemplate, notify) {
 
         return Backbone.View.extend({
             template: _.template(toolbarTemplate),
             className: "toolbar",
 
             events: {
-                "click #save": "save"
+                "click #save": "save",
+                "click #remove": "remove"
             },
 
             initialize: function(options) {
@@ -20,21 +22,42 @@ define(["backbone", "underscore", "text!templates/toolbars/edit-toolbar-template
 
             save: function(e) {
                 e.stopImmediatePropagation();
-
-                var url = "/admin/dsls/" + currentDsl + "/new-component";
+                var componentId = this.options.componentId;
+                var url = "/admin/dsls/" + currentDsl + "/components/" + componentId;
                 $.ajax({
-                    type: "POST",
+                    type: "PUT",
                     contentType: "application/json",
                     url: url,
                     data: JSON.stringify({ model: this.getComponent() }),
                     success: function() {
-                        alert("Saved");
+                        notify("success", 'Successfully saved!');
+                        Backbone.history.loadUrl(Backbone.history.fragment)
                     },
                     statusCode: {
                         400: function(res) {
-                            alert(res.responseText);
+                            var errorMessage = res.responseJSON.map(function(error) { return "- " + error; }).join("\n");
+                            notify("error", errorMessage);
                         }
                     }
+                });
+            },
+
+            remove: function(e) {
+                e.stopImmediatePropagation();
+
+                var componentId = this.options.componentId;
+
+                notify("confirmation", 'Are you sure?').get().on('pnotify.confirm', function(){
+                    var url = "/admin/dsls/" + currentDsl + "/components/" + componentId;
+                    $.ajax({
+                        type: "DELETE",
+                        contentType: "application/json",
+                        url: url,
+                        success: function() {
+                            notify("success", 'Successfully deleted!');
+                            window.router.navigate("/", {trigger: true});
+                        }
+                    }).on('pnotify.cancel', function(){});
                 });
             },
 

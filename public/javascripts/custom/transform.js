@@ -12,7 +12,8 @@ define(["backbone", "underscore", "joint", "geometry", "text!templates/transform
             },
 
             options: {
-                directions: ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w']
+                directions: ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'],
+                closable: true
             },
 
             initialize: function (options) {
@@ -46,7 +47,7 @@ define(["backbone", "underscore", "joint", "geometry", "text!templates/transform
 
             render: function () {
 
-                this.$el.html(this.template());
+                this.$el.html(this.template({ closable: this.options.closable }));
 
                 // We have to use `attr` as jQuery `data` doesn't update DOM
                 this.$el.attr('data-type', this.cell.get('type'));

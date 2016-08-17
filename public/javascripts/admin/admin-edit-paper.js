@@ -17,13 +17,6 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
                     self.renderTransform(cellView);
                     self.renderAttributes(cellView);
                 });
-
-                this.$el.droppable({
-                    accept: ".component-item",
-                    drop: function (event, ui) {
-                        self.drop(event, ui);
-                    }
-                });
             },
 
             renderView: function (cell) {
@@ -35,21 +28,13 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
             renderTransform: function (cellView) {
                 if (cellView.model instanceof joint.dia.Link) return;
 
-                var freeTransform = new Transform({cellView: cellView});
+                var freeTransform = new Transform({ cellView: cellView, closable: false });
                 freeTransform.render();
             },
 
             renderAttributes: function (cellView) {
                 var attributesView = attributesViewFactory(cellView);
                 window.east.renderAttributes(attributesView);
-            },
-
-            drop: function (event, ui) {
-                var position = this.clientToLocalPoint({x: ui.position.left, y: ui.position.top});
-                var model = $(ui.helper).data("model");
-
-                var component = componentFactory(model, position);
-                this.model.addCell(component);
             }
         });
 
