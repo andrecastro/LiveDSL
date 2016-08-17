@@ -7,6 +7,7 @@ define(["backbone"], function (Backbone) {
         },
         render: function () {
             this.$("#preview").empty();
+            this.$("#east-content").empty();
             var smallPaper = new this.options.Paper({
                 el: this.$("#preview"),
                 height: 600,
