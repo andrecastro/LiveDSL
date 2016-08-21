@@ -7,9 +7,21 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
                 height: 2000,
                 width: 2000,
                 gridSize: 15,
-                drawGrid: {color: '#BBBBBB', thickness: 1}
-            }),
+                drawGrid: {color: '#BBBBBB', thickness: 1},
+                markAvailable: true,
+                snapLinks: { radius: 75 },
 
+                validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+                    //console.log(cellViewS);
+                    //console.log(magnetS);
+                    //console.log(cellViewT);
+                    //console.log(magnetT);
+                    //console.log(end);
+                    //console.log(linkView);
+                    //cellViewS.model.attributes.component.id == "basic-node";
+                    return true;
+                }
+            }),
             render: function () {
                 var self = this;
 
@@ -28,6 +40,7 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
 
             renderView: function (cell) {
                 var renderedView = joint.dia.Paper.prototype.renderView.call(this, cell);
+                renderedView.$el.addClass(cell.attributes.component.id);
                 this.trigger('add:cell', renderedView);
                 return renderedView;
             },

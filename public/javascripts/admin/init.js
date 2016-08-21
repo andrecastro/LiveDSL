@@ -51,13 +51,31 @@ require(["/javascripts/config.js"], function () {
             function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, joint, Toolbar) {
                 window.graph = new joint.dia.Graph();
 
+                window.graph.on('change:source', function(link) {
+                    if (link.get('source').id) {
+                        var source = this.getElements().filter(function (e) {
+                           return e.id == link.get('source').id;
+                        });
+                        console.log(source[0]);
+                    }
+                });
+
+                window.graph.on('change:target', function(link) {
+                    if (link.get('target').id) {
+                        var target = this.getElements().filter(function (e) {
+                            return e.id == link.get('target').id;
+                        });
+                        console.log(target[0]);
+                    }
+                });
+
                 window.east = new East({
                     model: window.graph,
                     Paper: AdminPaper
                 }).render();
 
                 window.center = new Center({
-                    model: graph,
+                    model: window.graph,
                     Paper: AdminPaper
                 }).render();
 
@@ -80,7 +98,7 @@ require(["/javascripts/config.js"], function () {
                 }).render();
 
                 window.center = new Center({
-                    model: graph,
+                    model: window.graph,
                     Paper: AdminPaper
                 }).render();
 
@@ -103,7 +121,7 @@ require(["/javascripts/config.js"], function () {
                 }).render();
 
                 window.center = new Center({
-                    model: graph,
+                    model: window.graph,
                     Paper: AdminPaper
                 }).render();
 

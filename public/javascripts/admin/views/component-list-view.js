@@ -46,7 +46,7 @@ define(["backbone", "underscore", "views/component-item-view", "views/custom/col
                 });
 
                 var linksCollapsePanel = new CollapsePanelView({
-                    id: "links", link: "#new-link", title: "LINKS",
+                    id: "links", title: "LINKS", link: "#new-link",
                     contentPanel: linksGroup
                 });
 

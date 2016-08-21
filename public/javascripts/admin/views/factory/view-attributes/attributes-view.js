@@ -93,7 +93,13 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                     },
                     onSet: function (value, options) {
                         var model = options.view.model;
-                        model.prop(options.observe + "/" + nestedAttribute, this.valueByType(type, value));
+                        var correctValue = this.valueByType(type, value);
+                        model.prop(options.observe + "/" + nestedAttribute, correctValue);
+
+                        this.graph.getCells()
+                            .filter(function(c) { return c.attributes.component.id == model.attributes.component.id; })
+                            .forEach(function(c) { c.prop(options.observe + "/" + nestedAttribute, correctValue); });
+
                         return model.get(options.observe);
 
                     }

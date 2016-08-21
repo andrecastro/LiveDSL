@@ -1,5 +1,17 @@
 @import url('/stylesheets/transform-component.css');
 
+.available-cell g.scalable {
+    stroke: lightgreen;
+    stroke-width: 5px;
+    fill: none;
+}
+
+.joint-highlight-stroke.joint-theme-default {
+    stroke: green;
+    stroke-width: 3px;
+    fill: none;
+}
+
 #main-admin {
     margin-top: 30px;
 }
