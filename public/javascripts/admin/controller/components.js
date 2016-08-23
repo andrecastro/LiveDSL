@@ -100,5 +100,9 @@ define(["jquery", "joint"], function ($, joint) {
         return links;
     };
 
+    Components.prototype.getLocalComponentById = function(id) {
+        return window.components.filter(function(component) { return component.component.id == id })[0];
+    };
+
     return new Components();
 });

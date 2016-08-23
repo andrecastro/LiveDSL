@@ -12,7 +12,7 @@ require(["/javascripts/config.js"], function () {
         $('#east').layout({
             resizable: false,
             applyDefaultStyles: true,
-            south: { size: 150, closable: false }
+            south: {size: 150, closable: false}
         });
 
         var DslRouter = Backbone.Router.extend({
@@ -26,19 +26,19 @@ require(["/javascripts/config.js"], function () {
 
         window.router = new DslRouter();
 
-        window.router.on('route:tryDsl', function() {
+        window.router.on('route:tryDsl', function () {
             tryDsl();
         });
 
-        window.router.on('route:createNewNode', function() {
+        window.router.on('route:createNewNode', function () {
             newNode();
         });
 
-        window.router.on('route:createNewLink', function() {
+        window.router.on('route:createNewLink', function () {
             newLink();
         });
 
-        window.router.on('route:edit', function(id) {
+        window.router.on('route:edit', function (id) {
             editComponent(id);
         });
 
@@ -46,21 +46,21 @@ require(["/javascripts/config.js"], function () {
     });
 
     function tryDsl() {
-        require(["views/layout/center", "views/layout/west", "views/layout/east",  "views/component-list-view",
-                "scripts/admin/admin-graph", "scripts/admin/admin-paper", "joint", "views/toolbars/try-dsl-toolbar-view"],
-            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, joint, Toolbar) {
+        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
+                "scripts/admin/admin-paper", "joint", "views/toolbars/try-dsl-toolbar-view", "controller/components"],
+            function (Center, West, East, ComponentListView, AdminPaper, joint, Toolbar, Components) {
                 window.graph = new joint.dia.Graph();
 
-                window.graph.on('change:source', function(link) {
+                window.graph.on('change:source', function (link) {
                     if (link.get('source').id) {
                         var source = this.getElements().filter(function (e) {
-                           return e.id == link.get('source').id;
+                            return e.id == link.get('source').id;
                         });
                         console.log(source[0]);
                     }
                 });
 
-                window.graph.on('change:target', function(link) {
+                window.graph.on('change:target', function (link) {
                     if (link.get('target').id) {
                         var target = this.getElements().filter(function (e) {
                             return e.id == link.get('target').id;
@@ -79,17 +79,26 @@ require(["/javascripts/config.js"], function () {
                     Paper: AdminPaper
                 }).render();
 
+                window.components = Components.getAll();
+
+                var componentList = new ComponentListView({
+                    collection: window.components,
+                    enableEdit: true,
+                    enableNew: true
+                });
+
                 window.west = new West({
-                    listView: new ComponentListView(),
+                    listView: componentList,
                     toolbar: new Toolbar()
                 }).render();
             });
     }
 
     function newNode() {
-        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/new-node-list-view",
-                "scripts/admin/admin-graph", "scripts/admin/admin-paper", "views/toolbars/new-component-toolbar-view"],
-            function (Center, West, East, NodeListView, AdminGraph, AdminPaper, Toolbar) {
+        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
+                "scripts/admin/admin-graph", "scripts/admin/admin-paper", "views/toolbars/new-component-toolbar-view",
+                "controller/components"],
+            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components) {
                 window.graph = new AdminGraph();
 
                 window.east = new East({
@@ -102,17 +111,20 @@ require(["/javascripts/config.js"], function () {
                     Paper: AdminPaper
                 }).render();
 
+                window.components = Components.getPredefinedNodes();
+
                 window.west = new West({
-                    listView: new NodeListView(),
+                    listView: new ComponentListView({ collection: window.components, showLinks: false }),
                     toolbar: new Toolbar()
                 }).render();
             });
     }
 
     function newLink() {
-        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/new-link-list-view",
-                "scripts/admin/admin-graph", "scripts/admin/admin-paper", "views/toolbars/new-component-toolbar-view"],
-            function (Center, West, East, LinkListView, AdminGraph, AdminPaper, Toolbar) {
+        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
+                "scripts/admin/admin-graph", "scripts/admin/admin-paper", "views/toolbars/new-component-toolbar-view",
+                "controller/components"],
+            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components) {
                 window.graph = new AdminGraph();
 
                 window.east = new East({
@@ -125,18 +137,20 @@ require(["/javascripts/config.js"], function () {
                     Paper: AdminPaper
                 }).render();
 
+                window.components = Components.getPredefinedLinks();
+
                 window.west = new West({
-                    listView: new LinkListView(),
+                    listView: new ComponentListView({ collection: window.components, showNodes: false }),
                     toolbar: new Toolbar()
                 }).render();
             });
     }
 
     function editComponent(componentId) {
-        require(["views/layout/center", "views/layout/west",  "views/layout/east", "views/edit-component-list-view",
+        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/edit-component-list-view",
                 "scripts/admin/admin-graph", "scripts/admin/admin-edit-paper", "views/toolbars/edit-component-toolbar-view"],
             function (Center, West, East, EditComponentListView, AdminGraph, AdminPaper, Toolbar) {
-                var editComponentListView = new EditComponentListView({ id: componentId });
+                var editComponentListView = new EditComponentListView({id: componentId});
 
                 window.graph = new AdminGraph();
                 window.east = new East({
@@ -146,7 +160,7 @@ require(["/javascripts/config.js"], function () {
 
                 window.west = new West({
                     listView: editComponentListView,
-                    toolbar: new Toolbar( { componentId: componentId })
+                    toolbar: new Toolbar({componentId: componentId})
                 }).render();
 
                 window.center = new Center({

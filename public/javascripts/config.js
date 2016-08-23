@@ -43,6 +43,7 @@ requirejs.config({
         "moment-global": "../javascripts/custom/moment-global", // makes the moment library be visible in the global scope
         "models": "/javascripts/admin/models",
         "views": "/javascripts/admin/views",
+        "controller": "/javascripts/admin/controller",
         "templates": "/javascripts/admin/templates",
         "custom": "/javascripts/custom",
         "scripts": "/javascripts"

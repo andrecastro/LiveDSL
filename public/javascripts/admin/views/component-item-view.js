@@ -15,7 +15,7 @@ define(["backbone", "underscore", "text!templates/component-item-view.html"],
             },
 
             getComponent: function() {
-                var component = this.model.toJSON();
+                var component = this.model;
                 delete component.id;
                 return component;
             }

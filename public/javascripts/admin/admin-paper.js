@@ -1,6 +1,6 @@
 define(["underscore", "joint", "custom/transform", "views/factory/component-factory",
-        "views/factory/attributes-view-factory"],
-    function (_, joint, Transform, componentFactory, attributesViewFactory) {
+        "views/factory/attributes-view-factory", "controller/components"],
+    function (_, joint, Transform, componentFactory, attributesViewFactory, Components) {
 
         var Paper = joint.dia.Paper.extend({
             options: _.extend(joint.dia.Paper.prototype.options, {
@@ -46,7 +46,10 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
             },
 
             renderTransform: function (cellView) {
-                if (cellView.model instanceof joint.dia.Link) return;
+                if (cellView.model instanceof joint.dia.Link) {
+                    this.trigger('freetransform:create');
+                    return;
+                }
 
                 var freeTransform = new Transform({cellView: cellView});
                 freeTransform.render();
@@ -59,7 +62,8 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
 
             drop: function (event, ui) {
                 var position = this.clientToLocalPoint({x: ui.position.left, y: ui.position.top});
-                var model = $(ui.helper).data("model");
+                var componentId = $(ui.helper).data("component-id");
+                var model = Components.getLocalComponentById(componentId);
 
                 var component = componentFactory(model, position);
                 this.model.addCell(component);
