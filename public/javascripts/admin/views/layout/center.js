@@ -6,19 +6,20 @@ define(["backbone"], function (Backbone) {
             this.options = options;
         },
         render: function () {
-            this.$el.empty();
+            this.$("#center-content").empty();
 
-            if (this.$el.data('uiDroppable')) {
-                this.$el.droppable("destroy");
+            this.$("#center-title").html(this.options.title);
+
+            if (this.$("#center-content").data('uiDroppable')) {
+                this.$("#center-content").droppable("destroy");
             }
 
+
             this.paper = new this.options.Paper({
-                el: this.$el,
                 model: this.model
             });
 
-
-            this.paper.render();
+            this.$("#center-content").html(this.paper.render().$el);
             return this;
         }
     });

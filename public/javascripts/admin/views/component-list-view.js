@@ -7,7 +7,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view", "views/com
             options: {
                 showNodes: true,
                 showLinks: true,
-                enableEdit: false,
+                enableDelete: false,
                 enableNew: false
             },
             initialize: function (options) {
@@ -28,7 +28,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view", "views/com
                 if (this.options.showNodes) {
                     var nodesGroup = new ComponentItemGroup({
                         collection: nodes,
-                        edit: this.options.enableEdit
+                        enableDelete: this.options.enableDelete
                     });
 
                     var nodesCollapsePanel = new CollapsePanelView({
@@ -42,7 +42,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view", "views/com
                 if (this.options.showLinks) {
                     var linksGroup = new ComponentItemGroup({
                         collection: links,
-                        edit: this.options.enableEdit
+                        enableDelete: this.options.enableDelete
                     });
 
                     var linksCollapsePanel = new CollapsePanelView({

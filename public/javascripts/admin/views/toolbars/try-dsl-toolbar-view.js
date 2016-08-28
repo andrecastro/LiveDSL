@@ -22,16 +22,17 @@ define(["backbone", "underscore", "text!templates/toolbars/try-dsl-toolbar-templ
             save: function(e) {
                 e.stopImmediatePropagation();
 
-                var url = "/admin/dsls/" + currentDsl + "/new-component";
-                var currentComponent = this.getComponent();
+                var url = "/admin/dsls/" + currentDsl + "/update-info";
+                var components = window.components;
+                var metadata = window.graph.toJSON();
+
                 $.ajax({
-                    type: "POST",
+                    type: "PUT",
                     contentType: "application/json",
                     url: url,
-                    data: JSON.stringify({ model:  currentComponent }),
+                    data: JSON.stringify({ components:  components,  metadata: JSON.stringify(metadata) }),
                     success: function() {
                         notify("success", 'Successfully saved!');
-                        window.router.navigate("edit/" + currentComponent.component.id, {trigger: true});
                     },
                     statusCode: {
                         400: function(res) {
@@ -40,17 +41,6 @@ define(["backbone", "underscore", "text!templates/toolbars/try-dsl-toolbar-templ
                         }
                     }
                 });
-            },
-
-            getComponent: function() {
-                var component = graph.toJSON().cells[0];
-
-                if (component) {
-                    delete component.id;
-                    delete component.position;
-                }
-
-                return component;
             }
         });
     });

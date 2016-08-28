@@ -1,5 +1,17 @@
 @import url('/stylesheets/transform-component.css');
 
+#center-title {
+    background: #333;
+    color: white;
+    padding: 10px;
+    position:fixed;
+    z-index: 200000000000000;
+}
+
+#center {
+    padding: 0px !important;
+}
+
 .available-cell g.scalable {
     stroke: lightgreen;
     stroke-width: 5px;
@@ -193,13 +205,13 @@ a.accordion-toggle {
     overflow: visible !important;
 }
 
-.ui-layout-resizer-west, .ui-layout-resizer-east {
-    cursor: ew-resize !important;
-}
+/*.ui-layout-resizer-west, .ui-layout-resizer-east {*/
+    /*cursor: ew-resize !important;*/
+/*}*/
 
-.ui-layout-resizer-north, .ui-layout-resizer-south {
-    cursor: ns-resize !important;
-}
+/*.ui-layout-resizer-north, .ui-layout-resizer-south {*/
+    /*cursor: ns-resize !important;*/
+/*}*/
 
 .ui-layout-toggler {
     background: white !important;

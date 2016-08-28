@@ -13,6 +13,9 @@ var DslSchema = new Schema({
         type: String,
         required: [true, 'Description is required']
     },
+    metadata: {
+        type: String
+    },
     components: {
         type: Array
     }
@@ -36,7 +39,7 @@ DslSchema.methods.getComponents = function (type) {
     if (type) {
         return components.filter(function (component) {
             return component.component.type == type;
-        })
+        });
     }
 
     return components;
@@ -53,16 +56,10 @@ DslSchema.methods.getComponentById = function (componentId) {
     return components[0];
 };
 
-DslSchema.methods.updateComponent = function (newComponent, componentId) {
-    validateEdit(newComponent, componentId);
-    var component = this.getComponentById(componentId);
-    var index = this.components.indexOf(component);
-
+DslSchema.methods.prepareToUpdateComponent = function (newComponent) {
+    validateEdit(newComponent);
     EscapeHelper.escapeKeys(newComponent);
-    this.components[index] = newComponent;
-
-    this.markModified('components');
-    this.save();
+    return newComponent;
 };
 
 
@@ -75,16 +72,27 @@ DslSchema.methods.deleteComponent = function (componentId) {
     this.save();
 };
 
-function validateEdit(component, componentId) {
+DslSchema.methods.updateInfo = function (info) {
+    var newComponents = info.components;
+    var metadadata = info.metadata;
+
+    for (var index in newComponents) {
+        newComponents[index] = this.prepareToUpdateComponent(newComponents[index]);
+    }
+
+    this.components = newComponents;
+    this.metadata = metadadata;
+    this.markModified('components');
+    this.save();
+};
+
+
+function validateEdit(component) {
     if (component == null) {
         throw new ValidationException(["Component can not be null"]);
     }
 
     var errors = [];
-
-    if (component.component.id != componentId) {
-        errors.push("Component id can not be changed");
-    }
 
     if (!component.component.id || !component.component.id.trim()) {
         errors.push("Component id is mandatory");

@@ -2,19 +2,6 @@ define(["jquery", "joint"], function ($, joint) {
 
     function Components() {}
 
-    Components.prototype.getAll = function() {
-        var response = null;
-        $.ajax({
-            url: "/admin/dsls/" + currentDsl + "/components",
-            async: false,
-            success: function (res) {
-                response = res;
-            }
-        });
-
-        return response;
-    };
-
     Components.prototype.getPredefinedNodes = function() {
         var basic = new joint.shapes.basic.Rect({
             size: {width: 100, height: 30},
@@ -22,8 +9,11 @@ define(["jquery", "joint"], function ($, joint) {
             component: {
                 id: "basic-node",
                 friendlyName: "Basic",
-                image: "http://www.stickylife.com/images/u/853a9088913244b5a86715afc626aafe-800.png",
+                image: "/images/basic-node.png",
                 type: "NODE"
+            },
+            restrictions: {
+                links: {}
             }
         });
 
@@ -33,8 +23,11 @@ define(["jquery", "joint"], function ($, joint) {
             component: {
                 id: "ellipse",
                 friendlyName: "Ellipse",
-                image: "http://images.clipartpanda.com/ellipse-clipart-blue-ellipse-md.png",
+                image: "/images/ellipse-node.png",
                 type: "NODE"
+            },
+            restrictions: {
+                links: {}
             }
         });
 
@@ -44,8 +37,11 @@ define(["jquery", "joint"], function ($, joint) {
             component: {
                 id: "html",
                 friendlyName: "HTML",
-                image: "https://1.bp.blogspot.com/-hNjVYk2JVpc/V1BXy-zYIBI/AAAAAAAAAt8/yz25h6YZoQcb_hmXflCLaFhdNgjZXj5igCLcB/s1600/html1.png",
+                image: "/images/html-node.png",
                 type: "NODE"
+            },
+            restrictions: {
+                links: {}
             }
         });
 
@@ -53,7 +49,7 @@ define(["jquery", "joint"], function ($, joint) {
             size: {width: 100, height: 30},
             attrs: {
                 image: {
-                    "xlink:href": "http://crisciber162.pbworks.com/f/losango.gif",
+                    "xlink:href": "/images/image-node.png",
                     width: 1, height: 1
                 },
                 text: {text: "Image node", fill: 'white'}
@@ -61,8 +57,11 @@ define(["jquery", "joint"], function ($, joint) {
             component: {
                 id: "image-node",
                 friendlyName: "Image",
-                image: "https://archive.org/services/img/image",
+                image: "/images/image-node.png",
                 type: "NODE"
+            },
+            restrictions: {
+                links: {}
             }
         });
 
@@ -86,8 +85,11 @@ define(["jquery", "joint"], function ($, joint) {
             component: {
                 id: "basic-link",
                 friendlyName: "Basic",
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/ArrowCross.svg/2000px-ArrowCross.svg.png",
+                image: "/images/link.png",
                 type: "LINK"
+            },
+            restrictions: {
+                sources: [null]
             },
             labels: [
                 { position: 0.5, attrs: { text: { text: 'label' } } }
@@ -100,8 +102,42 @@ define(["jquery", "joint"], function ($, joint) {
         return links;
     };
 
+    Components.prototype.update = function (component) {
+        this.prepareToUpdate(component);
+        var savedComponent = this.getLocalComponentById(component.component.id);
+        var index = window.components.indexOf(savedComponent);
+
+        window.components[index] = component;
+        window.west.render();
+    };
+
+    Components.prototype.delete = function(componentId) {
+        window.graph.getCells().filter(function (cell) {
+            return cell.attributes.component.id == componentId;
+        }).forEach(function (cell) {
+            cell.remove();
+        });
+
+        var savedComponent = this.getLocalComponentById(componentId);
+        var index = window.components.indexOf(savedComponent);
+        window.components.splice(index, 1);
+    };
+
     Components.prototype.getLocalComponentById = function(id) {
         return window.components.filter(function(component) { return component.component.id == id })[0];
+    };
+
+    Components.prototype.prepareToUpdate = function (component) {
+        delete component.id; //make sure the id is deleted
+
+        if (component.component.type == "LINK") {
+            component.vertices = [];
+            component.source = { id: null, element: null };
+            component.target = { id: null, element: null };
+        } else {
+            component.position.x = null;
+            component.position.y = null;
+        }
     };
 
     return new Components();

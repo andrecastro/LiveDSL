@@ -3,10 +3,10 @@
     <%= model.component.friendlyName %>
 </div>
 
-<% if (edit) { %>
-    <a href="#edit/<%= model.component.id %>" class="add-link">
+<% if (enableDelete) { %>
+    <a href="#" class="add-link delete" onclick="return false;">
         <h4 class="panel-title">
-            edit
+            delete
         </h4>
     </a>
 <% } %>

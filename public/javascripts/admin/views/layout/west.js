@@ -1,5 +1,5 @@
 define(["backbone", "jquery-ui"],
-    function (Backbone, ToolbarView) {
+    function (Backbone) {
 
         var West =  Backbone.View.extend({
             el: $("#west"),
@@ -11,6 +11,8 @@ define(["backbone", "jquery-ui"],
             render: function() {
                 this.$el.empty();
                 this.$el.append(this.options.toolbar.render().el);
+                this.options.toolbar.delegateEvents();
+
                 this.$el.append(this.options.listView.render().el);
 
                 if (this.$(".component-item").data('uiDraggable')) {

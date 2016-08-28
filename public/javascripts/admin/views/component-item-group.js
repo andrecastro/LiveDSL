@@ -20,7 +20,7 @@ define(["backbone", "underscore", "views/component-item-view"],
             },
 
             toComponentItemView: function(componentItem) {
-                return new ComponentItemView({ model: componentItem , edit: this.options.edit });
+                return new ComponentItemView({ model: componentItem , enableDelete: this.options.enableDelete });
             }
         });
 

@@ -9,7 +9,6 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
                 gridSize: 15,
                 drawGrid: {color: '#BBBBBB', thickness: 1},
                 markAvailable: true,
-                snapLinks: { radius: 75 },
 
                 validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
                     //console.log(cellViewS);
@@ -36,6 +35,8 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
                         self.drop(event, ui);
                     }
                 });
+
+                return this;
             },
 
             renderView: function (cell) {

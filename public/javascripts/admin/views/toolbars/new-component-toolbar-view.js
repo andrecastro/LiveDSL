@@ -31,7 +31,7 @@ define(["backbone", "underscore", "text!templates/toolbars/new-toolbar-template.
                     data: JSON.stringify({ model:  currentComponent }),
                     success: function() {
                         notify("success", 'Successfully saved!');
-                        window.router.navigate("edit/" + currentComponent.component.id, {trigger: true});
+                        window.router.navigate("/", {trigger: true});
                     },
                     statusCode: {
                         400: function(res) {

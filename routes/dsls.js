@@ -86,6 +86,10 @@ module.exports = function (passport, user) {
         });
     });
 
+
+    // ---- DSL Interaction
+
+
     router.post("/:id/new-component", passport.isLoggedIn, function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
@@ -120,19 +124,7 @@ module.exports = function (passport, user) {
         });
     });
 
-    router.get("/:id/components/:componentId", passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function (err, dsl) {
-            if (err || !dsl) {
-                var error = new Error('Not Found');
-                error.status = 404;
-                return next(error);
-            }
-
-            res.json(dsl.getComponentById(req.params.componentId));
-        });
-    });
-
-    router.put("/:id/components/:componentId", passport.isLoggedIn, function (req, res, next) {
+    router.put("/:id/update-info", passport.isLoggedIn, function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
@@ -141,7 +133,7 @@ module.exports = function (passport, user) {
             }
 
             try {
-                dsl.updateComponent(req.body.model, req.params.componentId);
+                dsl.updateInfo(req.body);
             } catch (e) {
                 if (e instanceof ValidationException) {
                     return res.status(400).json(e.errors);
@@ -154,6 +146,18 @@ module.exports = function (passport, user) {
         });
     });
 
+    router.get("/:id/try", passport.isLoggedIn, function (req, res, next) {
+        Dsl.findById(req.params.id, function (err, dsl) {
+            if (err || !dsl) {
+                var error = new Error('Not Found');
+                error.status = 404;
+                return next(error);
+            }
+
+            res.json({metadata: dsl.metadata, components: dsl.getComponents() });
+        });
+    });
+
     router.delete("/:id/components/:componentId", passport.isLoggedIn, function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
@@ -163,7 +167,6 @@ module.exports = function (passport, user) {
             }
 
             dsl.deleteComponent(req.params.componentId);
-
             res.sendStatus(200);
         });
     });

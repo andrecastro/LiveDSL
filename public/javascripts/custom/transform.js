@@ -64,8 +64,8 @@ define(["backbone", "underscore", "joint", "geometry", "text!templates/transform
                 var rotateFunction = 'rotate(' + angle + 'deg)';
 
                 this.$el.css({
-                    'width': boundingBox.width + 20,
-                    'height': boundingBox.height + 20,
+                    'width': boundingBox.width,
+                    'height': boundingBox.height,
                     'left': boundingBox.x,
                     'top': boundingBox.y,
                     'transform': rotateFunction,
@@ -163,7 +163,7 @@ define(["backbone", "underscore", "joint", "geometry", "text!templates/transform
                         // Resize the element only if the dimensions are changed.
                         if (currentRect.width != width || currentRect.height != height) {
                             //var position = model.get("position");
-                            model.resize(width, height, {direction: i.direction});
+                            model.resize(width, height, {direction: i.direction, trigger: true});
                             //model.set("position", position);
                         }
 

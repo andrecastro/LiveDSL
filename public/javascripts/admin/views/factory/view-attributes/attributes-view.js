@@ -1,7 +1,8 @@
 define(["backbone", "underscore", "views/custom/collapse-panel-view",
         "text!templates/attributes/geometry.html", "text!templates/attributes/text.html",
-        "text!templates/attributes/component.html", "backbone-stickit"],
-    function (Backbone, _, CollapsePanelView, geometryTemplate, textTemplate, componentTemplate) {
+        "text!templates/attributes/component.html", "text!templates/attributes/restrictions-attributes.html",
+        "backbone-stickit"],
+    function (Backbone, _, CollapsePanelView, geometryTemplate, textTemplate, componentTemplate, restrictionsTemplate) {
 
         return Backbone.View.extend({
             className: "panel-group accordion-caret",
@@ -17,6 +18,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
 
                 this.listenTo(this.paper, 'blank:pointerdown attributes:remove_others', this.remove);
                 this.listenTo(this.model, 'remove', this.remove);
+                this.listenTo(this.model, 'change:restrictions', this.renderRestrictions);
             },
 
             render: function () {
@@ -25,6 +27,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 this.renderTextAttributes();
                 this.renderAppearance();
                 this.renderGeometryAttributes();
+                this.renderRestrictions();
                 this.stickit();
                 return this;
             },
@@ -74,10 +77,24 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
 
                 this.$el.append(geometryAttr.render().el);
 
-                this.bindInputToNestedField("#x", "position", "x", "NUMBER");
-                this.bindInputToNestedField("#y", "position", "y", "NUMBER");
+                //this.bindInputToNestedField("#x", "position", "x", "NUMBER");
+                //this.bindInputToNestedField("#y", "position", "y", "NUMBER");
                 this.bindInputToNestedField("#width", "size", "width", "NUMBER");
                 this.bindInputToNestedField("#height", "size", "height", "NUMBER");
+            },
+
+            renderRestrictions: function() {
+                this.$("#restrictions").remove();
+
+                var contentPanel = _.template(restrictionsTemplate);
+                var restrictionsAttr = new CollapsePanelView({
+                    title: "RESTRICTIONS",
+                    id: "restrictions",
+                    contentPanel: contentPanel()
+                });
+
+                this.$el.append(restrictionsAttr.render().el);
+                this.$("#restrictions-values").html(JSON.stringify(this.model.attributes.restrictions));
             },
 
             bindInputToNestedField: function (input, filed, nestedAttribute, type) {
@@ -94,7 +111,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                     onSet: function (value, options) {
                         var model = options.view.model;
                         var correctValue = this.valueByType(type, value);
-                        model.prop(options.observe + "/" + nestedAttribute, correctValue);
+                        model.prop(options.observe + "/" + nestedAttribute, correctValue, { trigger: true });
 
                         this.graph.getCells()
                             .filter(function(c) { return c.attributes.component.id == model.attributes.component.id; })
