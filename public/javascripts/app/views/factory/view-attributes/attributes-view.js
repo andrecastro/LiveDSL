@@ -1,6 +1,8 @@
 define(["backbone", "underscore", "views/custom/collapse-panel-view",
-        "text!templates/attributes/geometry.html", "text!templates/attributes/text.html", "backbone-stickit"],
-    function (Backbone, _, CollapsePanelView, geometryTemplate, textTemplate) {
+        "text!app-templates/attributes/geometry.html", "text!app-templates/attributes/text.html",
+        "text!app-templates/attributes/component.html", "text!app-templates/attributes/restrictions-attributes.html",
+        "backbone-stickit"],
+    function (Backbone, _, CollapsePanelView, geometryTemplate, textTemplate, componentTemplate, restrictionsTemplate) {
 
         return Backbone.View.extend({
             className: "panel-group accordion-caret",
@@ -16,6 +18,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
 
                 this.listenTo(this.paper, 'blank:pointerdown attributes:remove_others', this.remove);
                 this.listenTo(this.model, 'remove', this.remove);
+                this.listenTo(this.model, 'change:restrictions', this.renderRestrictions);
             },
 
             render: function () {
@@ -25,10 +28,6 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 this.renderGeometryAttributes();
                 this.stickit();
                 return this;
-            },
-
-            renderAppearance: function() {
-                // this method needs to be overwritten
             },
 
             renderTextAttributes: function() {
@@ -44,7 +43,10 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 this.bindInputToNestedField("#title", "attrs", "text/text", "STRING");
                 this.bindInputToNestedField("#font-size", "attrs", "text/font-size", "STRING");
                 this.bindInputToNestedField("#font-color", "attrs", "text/fill", "STRING");
-                this.bindInputToNestedField("#description", "attrs", "text/description", "STRING");
+            },
+
+            renderAppearance: function() {
+                // this method needs to be overwritten
             },
 
             renderGeometryAttributes: function () {
@@ -76,7 +78,9 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                     },
                     onSet: function (value, options) {
                         var model = options.view.model;
-                        model.prop(options.observe + "/" + nestedAttribute, this.valueByType(type, value));
+                        var correctValue = this.valueByType(type, value);
+                        model.prop(options.observe + "/" + nestedAttribute, correctValue);
+
                         return model.get(options.observe);
 
                     }

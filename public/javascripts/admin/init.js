@@ -19,8 +19,7 @@ require(["/javascripts/config.js"], function () {
             routes: {
                 "": "tryDsl",
                 "new-node": "createNewNode",
-                "new-link": "createNewLink",
-                "edit/:component_id": "edit"
+                "new-link": "createNewLink"
             }
         });
 
@@ -43,9 +42,9 @@ require(["/javascripts/config.js"], function () {
 
     function tryDsl() {
         require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
-                "scripts/admin/admin-paper", "scripts/admin/admin-graph", "views/toolbars/try-dsl-toolbar-view",
-                "controller/dsl_client"],
-            function (Center, West, East, ComponentListView, AdminPaper, AdminGraph, Toolbar, DslClient) {
+                "admin-scripts/admin-graph", "admin-scripts/admin-paper", "admin-views/toolbars/try-dsl-toolbar-view",
+                "controllers/dsl_client"],
+            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, DslClient) {
                 var dsl = DslClient.get();
 
                 window.graph = new AdminGraph();
@@ -55,9 +54,12 @@ require(["/javascripts/config.js"], function () {
                     Paper: AdminPaper
                 }).render();
 
+                var paper = new AdminPaper({
+                    model: window.graph
+                });
+
                 window.center = new Center({
-                    model: window.graph,
-                    Paper: AdminPaper,
+                    paper: paper,
                     title: "METAMODEL DEFINITION"
                 }).render();
 
@@ -82,8 +84,8 @@ require(["/javascripts/config.js"], function () {
 
     function newNode() {
         require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
-                "scripts/admin/admin-new-graph", "scripts/admin/admin-paper", "views/toolbars/new-component-toolbar-view",
-                "controller/components"],
+                "admin-scripts/admin-new-graph", "admin-scripts/admin-paper",
+                "admin-views/toolbars/new-component-toolbar-view", "controllers/components"],
             function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components) {
                 window.graph = new AdminGraph();
 
@@ -92,9 +94,13 @@ require(["/javascripts/config.js"], function () {
                     Paper: AdminPaper
                 }).render();
 
-                window.center = new Center({
+                var paper = new AdminPaper({
                     model: window.graph,
-                    Paper: AdminPaper,
+                    changeComponentId: true
+                });
+
+                window.center = new Center({
+                    paper: paper,
                     title: "NEW NODE"
                 }).render();
 
@@ -109,8 +115,8 @@ require(["/javascripts/config.js"], function () {
 
     function newLink() {
         require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
-                "scripts/admin/admin-new-graph", "scripts/admin/admin-paper", "views/toolbars/new-component-toolbar-view",
-                "controller/components"],
+                "admin-scripts/admin-new-graph", "admin-scripts/admin-paper",
+                "admin-views/toolbars/new-component-toolbar-view", "controllers/components"],
             function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components) {
                 window.graph = new AdminGraph();
 
@@ -119,9 +125,13 @@ require(["/javascripts/config.js"], function () {
                     Paper: AdminPaper
                 }).render();
 
-                window.center = new Center({
+                var paper = new AdminPaper({
                     model: window.graph,
-                    Paper: AdminPaper,
+                    changeComponentId: true
+                });
+
+                window.center = new Center({
+                    paper: paper,
                     title: "NEW NODE"
                 }).render();
 

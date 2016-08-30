@@ -1,5 +1,5 @@
 define(["underscore", "joint", "custom/transform", "views/factory/component-factory",
-        "admin-views/factory/attributes-view-factory", "controllers/components"],
+        "app-views/factory/attributes-view-factory", "controllers/components"],
     function (_, joint, Transform, componentFactory, attributesViewFactory, Components) {
 
         var Paper = joint.dia.Paper.extend({
@@ -7,7 +7,24 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
                 height: 2000,
                 width: 2000,
                 gridSize: 1,
-                markAvailable: true
+                markAvailable: true,
+
+                validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+
+                    if (end == 'source') {
+                        var sources = linkView.model.get('restrictions').sources;
+
+                        return _.contains(sources, cellViewS.model.get('component').id) || _.contains(sources, null);
+                    } else if (linkView.model.get('source').id) {
+                        var source = this.model.getCell(linkView.model.get('source').id);
+                        var linkComponentId = linkView.model.get('component').id;
+                        var linkRestriction = source.attributes.restrictions.links[linkComponentId];
+
+                        return linkRestriction == null || _.contains(linkRestriction.targets, cellViewT.model.get('component').id);
+                    }
+
+                    return false;
+                }
             }),
             render: function () {
                 var self = this;
@@ -45,7 +62,7 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
             },
 
             renderAttributes: function (cellView) {
-                var attributesView = attributesViewFactory(cellView, {changeComponentId: this.options.changeComponentId});
+                var attributesView = attributesViewFactory(cellView);
                 window.east.renderAttributes(attributesView);
             },
 

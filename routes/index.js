@@ -1,10 +1,11 @@
 var express = require('express');
+var User = require('../models/user');
 var router = express.Router();
 
 module.exports = function(passport) {
 
     router.get('/', passport.isLoggedIn, function(req, res, next) {
-        res.redirect('/admin/dsls');
+        res.redirect('/projects');
     });
 
     router.get('/login', function(req, res, next) {

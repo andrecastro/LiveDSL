@@ -1,5 +1,5 @@
-define(["underscore", "views/factory/view-attributes/attributes-view", "views/custom/collapse-panel-view",
-        "text!templates/attributes/ellipse-appearance.html"],
+define(["underscore", "admin-views/factory/view-attributes/attributes-view", "views/custom/collapse-panel-view",
+        "text!admin-templates/attributes/ellipse-appearance.html"],
     function(_, AttributesView, CollapsePanelView, ellipseAppearanceTemplate) {
 
         var EllipseAttributesView = AttributesView.extend({

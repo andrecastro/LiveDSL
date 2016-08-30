@@ -9,11 +9,11 @@ define(["backbone", "jquery-ui"],
             },
 
             render: function() {
-                this.$el.empty();
-                this.$el.append(this.options.toolbar.render().el);
+                this.$("#west-content").empty();
+                this.$("#west-content").append(this.options.toolbar.render().el);
                 this.options.toolbar.delegateEvents();
 
-                this.$el.append(this.options.listView.render().el);
+                this.$("#west-content").append(this.options.listView.render().el);
 
                 if (this.$(".component-item").data('uiDraggable')) {
                     this.$(".component-item").draggable("destroy");

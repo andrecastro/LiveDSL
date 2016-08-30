@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet"
+          href="//fonts.googleapis.com/css?family=Titillium+Web:400,300,700&amp;subset=latin,latin-ext"/>
+    <link rel="stylesheet" href="/vendor/bootstrap.ui/dist/css/bootstrap-ui.min.css"/>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
+    <link rel="stylesheet" href="/stylesheets/custom-panel.css"/>
+
+    <script data-main="/javascripts/admin" src="/vendor/requirejs/require.js"></script>
+
+</head>
+
+<body class="site has-navbar-fixed-top">
+
+<%- include ../partials/_header.ejs %>
+
+<main id="main-admin" role="main" class="container">
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/projects">My Projects</a></li>
+        <li class="breadcrumb-item active">New</li>
+    </ol>
+
+    <%- include ../partials/_flash.ejs %>
+
+    <div class="well search">
+        <form action="/projects/<%= project.id %>?_method=put" method="post">
+            <%- include _form.ejs %>
+        </form>
+    </div>
+
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+<div class="form-group row">
+    <label for="example-text-input" class="col-xs-2 col-form-label">Name</label>
+    <div class="col-xs-10">
+        <input class="form-control" name="name" type="text" value="<%= project.name %>">
+    </div>
+</div>
+
+<% if (project.isNew) { %>
+    <div class="form-group row">
+        <label for="example-text-input" class="col-xs-2 col-form-label">DSL</label>
+        <div class="col-xs-10">
+            <select class="form-control" name="dsl" data-onload-select2>
+                <% for (var index in dsls) {%>
+                    <% if (project.dsl == dsls[index].id) { %>
+                        <option selected value="<%= dsls[index].id %>"><%= dsls[index].name %></option>
+                    <% } else { %>
+                        <option value="<%= dsls[index].id %>"><%= dsls[index].name %></option>
+                    <% } %>
+                <% } %>
+            </select>
+        </div>
+    </div>
+<% } %>
+
+<div class="form-group row">
+    <label for="example-text-input" class="col-xs-2 col-form-label">Description</label>
+    <div class="col-xs-10">
+        <textarea class="form-control" rows="3" style="height: 100px" name="description" id="description"><%= project.description %></textarea>
+    </div>
+</div>
+
+<div class="form-group row">
+    <div class="col-xs-12">
+        <button type="submit" style="float: right" class="btn btn-primary">Submit</button>
+    </div>
+</div>

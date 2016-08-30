@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet"
+          href="//fonts.googleapis.com/css?family=Titillium+Web:400,300,700&amp;subset=latin,latin-ext"/>
+    <link rel="stylesheet" href="/vendor/bootstrap.ui/dist/css/bootstrap-ui.min.css"/>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
+    <link rel="stylesheet" href="/stylesheets/custom-panel.css"/>
+
+    <script data-main="/javascripts/admin" src="/vendor/requirejs/require.js"></script>
+
+</head>
+
+<body class="site has-navbar-fixed-top">
+
+<%- include ../partials/_header.ejs %>
+
+<main id="main-admin" role="main" class="container">
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/projects">My Projects</a></li>
+    </ol>
+
+    <%- include ../partials/_flash.ejs %>
+
+    <!-- Main component for a primary marketing message or call to action -->
+    <div class="well search">
+        <form>
+            <div class="form-group">
+                <div class="input-group" >
+                    <input type="text" class="form-control" name="name" value="<%= name %>" placeholder="Name"/>
+                     <span class="input-group-btn">
+                        <button type="submit" class="btn btn-primary btn-raised">Search</button>
+                    </span>
+                </div>
+            </div>
+
+            <a href="/projects/new" class="btn btn-default">New</a>
+        </form>
+    </div>
+
+
+    <div class="row">
+        <% for (var index in projects) { %>
+            <% var project = projects[index]; %>
+
+            <div class="col-lg-4 col-md-4 col-xs-6 thumb">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2><strong><%= project.name %></strong></h2>
+                        <div class="panel-actions">
+                            <a href="/projects/edit/<%= project.id %>" class="btn-close"><i class="glyphicon glyphicon-cog"></i></a>
+                            <a href="#" onClick="$('#delete-<%= project.id %>').submit()" class="btn-close"><i class="glyphicon glyphicon-trash"></i></a>
+                            <form method="POST" action="/projects/<%= project.id%>?_method=delete" id="delete-<%= project.id%>"></form>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <a href="/projects/<%= project.id %>">
+                            <img class="img-responsive" src="/images/400x300.png" alt="<%= project.description %>">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</main>
+
+</body>
+
+</html>

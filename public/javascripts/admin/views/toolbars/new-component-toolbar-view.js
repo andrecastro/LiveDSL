@@ -1,5 +1,5 @@
-define(["backbone", "underscore", "text!templates/toolbars/new-toolbar-template.html",
-        "scripts/custom/pnotify-bootstrap"],
+define(["backbone", "underscore", "text!admin-templates/toolbars/new-toolbar-template.html",
+        "custom/pnotify-bootstrap"],
     function (Backbone, _, toolbarTemplate, notify) {
 
         return Backbone.View.extend({

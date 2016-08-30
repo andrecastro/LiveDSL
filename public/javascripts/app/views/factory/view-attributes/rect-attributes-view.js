@@ -1,5 +1,5 @@
-define(["underscore", "views/factory/view-attributes/attributes-view", "views/custom/collapse-panel-view",
-        "text!templates/attributes/rect-appearance.html"],
+define(["underscore", "app-views/factory/view-attributes/attributes-view", "views/custom/collapse-panel-view",
+        "text!app-templates/attributes/rect-appearance.html"],
     function(_, AttributesView, CollapsePanelView, rectAppearanceTemplate) {
 
         var RectAttributesView = AttributesView.extend({

@@ -1,8 +1,8 @@
-define(["underscore", "views/factory/view-attributes/attributes-view",
+define(["underscore", "admin-views/factory/view-attributes/attributes-view",
         "views/custom/collapse-panel-view",
-        "text!templates/attributes/link-connection-attributes.html",
-        "text!templates/attributes/link-source-target-attributes.html",
-        "text!templates/attributes/link-restrictions-attributes.html"],
+        "text!admin-templates/attributes/link-connection-attributes.html",
+        "text!admin-templates/attributes/link-source-target-attributes.html",
+        "text!admin-templates/attributes/link-restrictions-attributes.html"],
     function(_, AttributesView, CollapsePanelView, linkConnectionTemplate, linkSourceTargetTemplate,
              linkRestrictionsTemplate) {
 

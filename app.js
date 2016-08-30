@@ -26,6 +26,13 @@ app.use(methodOverride("_method"));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function (req, res, next) {
+    if (!res.locals.title) {
+        res.locals.title = "";
+    }
+
+    next();
+});
 app.use(session({
     secret: 'secret',
     resave: false,
@@ -39,6 +46,7 @@ app.use(function (req, res, next) {
     res.locals.loggedUser = req.user;
     next();
 });
+
 
 // passport config
 var User = require('./models/user');
@@ -69,7 +77,7 @@ var user = new ConnectRoles({
         var accept = req.headers.accept || '';
         res.status(403);
         if (~accept.indexOf('html')) {
-            res.render('access-denied', {action: action});
+            res.render('access-denied', { action: action });
         } else {
             res.send('Access Denied - You don\'t have permission to: ' + action);
         }
@@ -90,9 +98,11 @@ mongoose.set('debug', true);
 // routes
 var routes = require('./routes/index')(passport);
 var dsls = require('./routes/dsls')(passport, user);
+var projects = require('./routes/projects')(passport);
 
 app.use('/', routes);
 app.use('/admin/dsls', dsls);
+app.use('/projects', projects);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

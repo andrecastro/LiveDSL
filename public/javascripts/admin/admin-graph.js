@@ -1,4 +1,4 @@
-define(["underscore", "joint", "controller/components"], function (_, joint, Components) {
+define(["underscore", "joint", "controllers/components"], function (_, joint, Components) {
 
     var AdminGraph = joint.dia.Graph.extend({
         initialize: function (attrs, opt) {

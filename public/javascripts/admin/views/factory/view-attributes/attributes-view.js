@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "views/custom/collapse-panel-view",
-        "text!templates/attributes/geometry.html", "text!templates/attributes/text.html",
-        "text!templates/attributes/component.html", "text!templates/attributes/restrictions-attributes.html",
+        "text!admin-templates/attributes/geometry.html", "text!admin-templates/attributes/text.html",
+        "text!admin-templates/attributes/component.html", "text!admin-templates/attributes/restrictions-attributes.html",
         "backbone-stickit"],
     function (Backbone, _, CollapsePanelView, geometryTemplate, textTemplate, componentTemplate, restrictionsTemplate) {
 
@@ -8,6 +8,7 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
             className: "panel-group accordion-caret",
 
             initialize: function (options) {
+                this.options = options;
                 this.cellView = options.cellView;
                 this.model = options.cellView.model;
                 this.paper = options.cellView.paper;
@@ -42,7 +43,13 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
 
                 this.$el.append(componentAttr.render().el);
 
-                this.bindInputToNestedField("#component-id", "component", "id", "STRING");
+                if (this.options.changeComponentId) {
+                    this.bindInputToNestedField("#component-id", "component", "id", "STRING");
+                } else {
+                    this.$("#component-id").val(this.model.get("component").id);
+                    this.$("#component-id").disable();
+                }
+
                 this.bindInputToNestedField("#component-friendly-name", "component", "friendlyName", "STRING");
                 this.bindInputToNestedField("#component-image", "component", "image", "STRING");
                 this.bindInputToNestedField("#component-description", "component", "description", "STRING");

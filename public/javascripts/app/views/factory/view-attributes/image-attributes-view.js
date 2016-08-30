@@ -1,5 +1,5 @@
-define(["underscore", "views/factory/view-attributes/attributes-view", "views/custom/collapse-panel-view",
-    "text!templates/attributes/image-appearance.html"],
+define(["underscore", "app-views/factory/view-attributes/attributes-view", "views/custom/collapse-panel-view",
+    "text!app-templates/attributes/image-appearance.html"],
     function(_, AttributesView, CollapsePanelView, imageAppearanceTemplate) {
     var ImageAttributesView = AttributesView.extend({
         renderAppearance: function() {

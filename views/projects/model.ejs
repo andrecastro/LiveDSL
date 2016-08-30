@@ -11,13 +11,13 @@
     <link rel="stylesheet" href="/vendor/jointjs/dist/joint.min.css"/>
     <link rel="stylesheet" href="/stylesheets/style.css"/>
 
-    <script data-main="/javascripts/admin/init" src="/vendor/requirejs/require.js"></script>
+    <script data-main="/javascripts/app/init" src="/vendor/requirejs/require.js"></script>
 </head>
 
 <body class="site has-navbar-fixed-top">
 
 <script>
-    var currentDsl = '<%= dsl.id %>';
+    var currentProject = '<%= project.id %>';
 </script>
 
 <%- include ../partials/_header.ejs %>
@@ -35,7 +35,7 @@
 
     <div id="west" class="ui-layout-west">
         <div id="west-title">
-            DSL - <%= title %>
+            Project - <%= title %>
         </div>
         <div id="west-content">
 

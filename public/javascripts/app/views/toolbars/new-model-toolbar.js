@@ -1,6 +1,6 @@
-define(["backbone", "underscore", "text!admin-templates/toolbars/try-dsl-toolbar-template.html",
-        "controllers/dsl_client", "custom/pnotify-bootstrap"],
-    function (Backbone, _, toolbarTemplate, Dsls, notify) {
+define(["backbone", "underscore", "text!app-templates/toolbars/new-model-toolbar.html",
+        "custom/pnotify-bootstrap", "controllers/projects"],
+    function (Backbone, _, toolbarTemplate, notify, Projects) {
 
         return Backbone.View.extend({
             template: _.template(toolbarTemplate),
@@ -22,13 +22,14 @@ define(["backbone", "underscore", "text!admin-templates/toolbars/try-dsl-toolbar
             save: function(e) {
                 e.stopImmediatePropagation();
 
-                var components = window.components;
-                var metadata = window.graph.toJSON();
+                var model = window.graph.toJSON();
 
-                Dsls.updateInfo(components, metadata, function() {
+                Projects.saveModel(model, function () {
                     notify("success", 'Successfully saved!');
                 }, function(res) {
-                    var errorMessage = res.responseJSON.map(function(error) { return "- " + error; }).join("\n");
+                    var errorMessage = res.responseJSON.map(function (error) {
+                        return "- " + error;
+                    }).join("\n");
                     notify("error", errorMessage);
                 });
             }

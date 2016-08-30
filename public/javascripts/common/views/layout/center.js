@@ -7,19 +7,13 @@ define(["backbone"], function (Backbone) {
         },
         render: function () {
             this.$("#center-content").empty();
-
             this.$("#center-title").html(this.options.title);
 
             if (this.$("#center-content").data('uiDroppable')) {
                 this.$("#center-content").droppable("destroy");
             }
 
-
-            this.paper = new this.options.Paper({
-                model: this.model
-            });
-
-            this.$("#center-content").html(this.paper.render().$el);
+            this.$("#center-content").html(this.options.paper.render().$el);
             return this;
         }
     });

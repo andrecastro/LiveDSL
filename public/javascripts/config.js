@@ -41,12 +41,21 @@ requirejs.config({
         "jquery-ui-touch": "jquery-ui-touch-punch/jquery.ui.touch-punch",
         "jquery-ui-layout": "jquery-ui-layout-latest/jquery.layout-latest",
         "moment-global": "../javascripts/custom/moment-global", // makes the moment library be visible in the global scope
-        "models": "/javascripts/admin/models",
-        "views": "/javascripts/admin/views",
-        "controller": "/javascripts/admin/controller",
-        "templates": "/javascripts/admin/templates",
+
+        "views": "/javascripts/common/views",
+        "controllers": "/javascripts/common/controllers",
+        "templates": "/javascripts/common/templates",
         "custom": "/javascripts/custom",
-        "scripts": "/javascripts"
+        "scripts": "/javascripts",
+        "admin-scripts": "/javascripts/admin",
+        "app-scripts": "/javascripts/app",
+
+        "admin-views": "/javascripts/admin/views",
+        "admin-templates": "/javascripts/admin/templates",
+
+        "app-views": "/javascripts/app/views",
+        "app-templates": "/javascripts/app/templates"
+
     },
     map: {
         '*': {

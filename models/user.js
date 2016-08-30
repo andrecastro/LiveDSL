@@ -10,9 +10,13 @@ var UserSchema = new Schema({
     username: {
         type: String,
         required: [true, 'Username is required'],
+        unique: true,
         index: true
     },
     password: {
+        type: String
+    },
+    role: {
         type: String
     }
 });

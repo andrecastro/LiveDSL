@@ -7,7 +7,8 @@ var DslSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name is required'],
-        index: true
+        index: true,
+        unique: true
     },
     description: {
         type: String,

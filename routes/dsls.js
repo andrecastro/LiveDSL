@@ -5,22 +5,22 @@ var ValidationException = require("../models/error/validation_exception");
 
 module.exports = function (passport, user) {
 
-    router.get('/', passport.isLoggedIn, function (req, res, next) {
+    router.get('/', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         Dsl.find({name: new RegExp(req.query.name, "i")}, function (err, dsls) {
             res.render('dsls/index', {dsls: dsls, name: req.query.name});
         });
     });
 
-    router.get('/new', passport.isLoggedIn, function (req, res, next) {
+    router.get('/new', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         var dsl = new Dsl();
         res.render('dsls/new', {dsl: dsl});
     });
 
-    router.post('/', passport.isLoggedIn, function (req, res, next) {
+    router.post('/', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         var dsl = new Dsl({name: req.body.name, description: req.body.description});
 
         dsl.save(function (err) {
-            if (err || !dsl) {
+            if (err) {
                 req.flash("error", "Validation error");
                 console.log(err);
                 return res.render('dsls/new', {dsl: dsl});
@@ -31,7 +31,7 @@ module.exports = function (passport, user) {
         });
     });
 
-    router.get('/edit/:id', passport.isLoggedIn, function (req, res, next) {
+    router.get('/edit/:id', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
@@ -43,19 +43,7 @@ module.exports = function (passport, user) {
         });
     });
 
-    router.get('/:id', passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function (err, dsl) {
-            if (err || !dsl) {
-                var error = new Error('Not Found');
-                error.status = 404;
-                return next(error);
-            }
-
-            res.render('dsls/change', {dsl: dsl});
-        });
-    });
-
-    router.put('/:id', passport.isLoggedIn, function (req, res, next) {
+    router.put('/:id', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
@@ -79,7 +67,7 @@ module.exports = function (passport, user) {
         });
     });
 
-    router.delete('/:id', passport.isLoggedIn, function (req, res, next) {
+    router.delete('/:id', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         Dsl.findByIdAndRemove(req.params.id, function (err, dsl) {
             req.flash("info", "Successfully deleted");
             res.redirect('/admin/dsls')
@@ -89,8 +77,20 @@ module.exports = function (passport, user) {
 
     // ---- DSL Interaction
 
+    router.get('/:id', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
+        Dsl.findById(req.params.id, function (err, dsl) {
+            if (err || !dsl) {
+                var error = new Error('Not Found');
+                error.status = 404;
+                return next(error);
+            }
 
-    router.post("/:id/new-component", passport.isLoggedIn, function (req, res, next) {
+            res.render('dsls/change', { dsl: dsl, title: dsl.name });
+        });
+    });
+
+
+    router.post("/:id/new-component", passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
@@ -112,19 +112,7 @@ module.exports = function (passport, user) {
         });
     });
 
-    router.get("/:id/components", passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function (err, dsl) {
-            if (err || !dsl) {
-                var error = new Error('Not Found');
-                error.status = 404;
-                return next(error);
-            }
-
-            res.json(dsl.getComponents(req.query.type));
-        });
-    });
-
-    router.put("/:id/update-info", passport.isLoggedIn, function (req, res, next) {
+    router.put("/:id/update-info", passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
@@ -146,7 +134,7 @@ module.exports = function (passport, user) {
         });
     });
 
-    router.get("/:id/try", passport.isLoggedIn, function (req, res, next) {
+    router.get("/:id/try", passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
@@ -154,22 +142,23 @@ module.exports = function (passport, user) {
                 return next(error);
             }
 
-            res.json({metadata: dsl.metadata, components: dsl.getComponents() });
+            res.json({metadata: dsl.metadata, components: dsl.getComponents()});
         });
     });
 
-    router.delete("/:id/components/:componentId", passport.isLoggedIn, function (req, res, next) {
-        Dsl.findById(req.params.id, function (err, dsl) {
-            if (err || !dsl) {
-                var error = new Error('Not Found');
-                error.status = 404;
-                return next(error);
-            }
+    router.delete("/:id/components/:componentId", user.can('access admin pages'), passport.isLoggedIn,
+        function (req, res, next) {
+            Dsl.findById(req.params.id, function (err, dsl) {
+                if (err || !dsl) {
+                    var error = new Error('Not Found');
+                    error.status = 404;
+                    return next(error);
+                }
 
-            dsl.deleteComponent(req.params.componentId);
-            res.sendStatus(200);
+                dsl.deleteComponent(req.params.componentId);
+                res.sendStatus(200);
+            });
         });
-    });
 
     return router;
 };
