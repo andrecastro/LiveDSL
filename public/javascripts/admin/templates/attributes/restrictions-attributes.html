@@ -1,5 +1,29 @@
 <div class="attributes-group form-horizontal">
+
     <div class="form-group">
-        <label id="restrictions-values"></label>
+        <label class="col-sm-6" for="quantity-on-graph">Quantity on graph:</label>
+
+        <div class="col-sm-3">
+            <input  class="form-control" type="number" min="1" name="quantity-on-graph" id="quantity-on-graph">
+        </div>
     </div>
+
+    <% Object.keys(links).forEach(function(link) { %>
+    <div class="form-group">
+        <label class="col-sm-12" id="link-<%= link%>"><%= link %>:</label>
+
+        <% for(var index in links[link].targets) { %>
+        <% var target = links[link].targets[index] %>
+        <div class="col-sm-12">
+            <label class="col-sm-6"><%= target.id %>-qty</label>
+            <div class="col-sm-3">
+                <input class="form-control" id="<%= link %>-<%= target.id%>-qty" type="number" min="1" >
+            </div>
+        </div>
+        <% } %>
+
+    </div>
+    <% }) %>
+
 </div>
+

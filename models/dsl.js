@@ -22,17 +22,43 @@ var DslSchema = new Schema({
     }
 });
 
-DslSchema.methods.addNewComponent = function (component) {
-    validateComponent(this, component);
+DslSchema.methods.addNewComponent = function (component, callback) {
+    try {
+        validateComponent(this, component)
+    } catch (e) {
+        return callback.call(this, e);
+    }
 
     EscapeHelper.escapeKeys(component);
-
     this.components.push(component);
-    this.save();
+
+    this.save(function (err) {
+        callback.call(this, err);
+    });
+};
+
+DslSchema.methods.updateInfo = function (info, callback) {
+    var newComponents = info.components;
+    var metadadata = info.metadata;
+
+    try {
+        for (var index in newComponents) {
+            newComponents[index] = this.prepareToUpdateComponent(newComponents[index]);
+        }
+    } catch (e) {
+        return callback.call(this, e);
+    }
+
+    this.components = newComponents;
+    this.metadata = metadadata;
+    this.markModified('components');
+    this.save(function (err) {
+        callback.call(this, err);
+    });
 };
 
 DslSchema.methods.getComponents = function (type) {
-    var components = this.components.map(function(component) {
+    var components = this.components.map(function (component) {
         EscapeHelper.retrieveEscapedChars(component);
         return component;
     });
@@ -47,9 +73,9 @@ DslSchema.methods.getComponents = function (type) {
 };
 
 DslSchema.methods.getComponentById = function (componentId) {
-    var components = this.components.filter(function(component) {
+    var components = this.components.filter(function (component) {
         return component.component.id == componentId;
-    }).map(function(component) {
+    }).map(function (component) {
         EscapeHelper.retrieveEscapedChars(component);
         return component;
     });
@@ -62,31 +88,6 @@ DslSchema.methods.prepareToUpdateComponent = function (newComponent) {
     EscapeHelper.escapeKeys(newComponent);
     return newComponent;
 };
-
-
-DslSchema.methods.deleteComponent = function (componentId) {
-    var component = this.getComponentById(componentId);
-    var index = this.components.indexOf(component);
-
-    this.components.splice(index, 1);
-    this.markModified('components');
-    this.save();
-};
-
-DslSchema.methods.updateInfo = function (info) {
-    var newComponents = info.components;
-    var metadadata = info.metadata;
-
-    for (var index in newComponents) {
-        newComponents[index] = this.prepareToUpdateComponent(newComponents[index]);
-    }
-
-    this.components = newComponents;
-    this.metadata = metadadata;
-    this.markModified('components');
-    this.save();
-};
-
 
 function validateEdit(component) {
     if (component == null) {

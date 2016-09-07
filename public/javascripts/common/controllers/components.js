@@ -13,6 +13,7 @@ define(["jquery", "joint"], function ($, joint) {
                 type: "NODE"
             },
             restrictions: {
+                quantityOnGraph: 1,
                 links: {}
             }
         });
@@ -27,6 +28,7 @@ define(["jquery", "joint"], function ($, joint) {
                 type: "NODE"
             },
             restrictions: {
+                quantityOnGraph: 1,
                 links: {}
             }
         });
@@ -41,6 +43,7 @@ define(["jquery", "joint"], function ($, joint) {
                 type: "NODE"
             },
             restrictions: {
+                quantityOnGraph: 1,
                 links: {}
             }
         });
@@ -61,6 +64,7 @@ define(["jquery", "joint"], function ($, joint) {
                 type: "NODE"
             },
             restrictions: {
+                quantityOnGraph: 1,
                 links: {}
             }
         });
@@ -131,6 +135,7 @@ define(["jquery", "joint"], function ($, joint) {
         delete component.id; //make sure the id is deleted
 
         if (component.component.type == "LINK") {
+            delete component.oldSource;
             component.vertices = [];
             component.source = { id: null, element: null };
             component.target = { id: null, element: null };

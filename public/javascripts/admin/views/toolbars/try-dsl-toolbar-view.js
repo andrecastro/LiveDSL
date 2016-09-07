@@ -16,6 +16,7 @@ define(["backbone", "underscore", "text!admin-templates/toolbars/try-dsl-toolbar
 
             render: function() {
                 this.$el.html(this.template());
+                this.$('[data-toggle="tooltip"]').tooltip();
                 return this;
             },
 

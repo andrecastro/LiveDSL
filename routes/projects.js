@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var Project = require('../models/project');
 var Dsl = require('../models/dsl');
-var ValidationException = require("../models/error/validation_exception");
 
 module.exports = function (passport) {
 
@@ -125,21 +124,14 @@ module.exports = function (passport) {
                 return next(error);
             }
 
-            try {
-                project.model = req.body.model;
-                project.save(function (err, mo) {
-                    console.log(err);
-                    console.log(mo);
-                });
-            } catch (e) {
-                if (e instanceof ValidationException) {
-                    return res.status(400).json(e.errors);
-                } else {
+            project.model = req.body.model;
+            project.save(function (err) {
+                if (err) {
                     return res.status(500);
                 }
-            }
 
-            res.sendStatus(200);
+                res.sendStatus(200);
+            });
         });
     });
 

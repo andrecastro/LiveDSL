@@ -1,12 +1,14 @@
-<div class="component-item" data-component-id='<%= model.component.id %>'>
-    <img class="node-icon" src="<%= model.component.image %>" alt="<%= model.component.friendlyName %>" height="16" width="16">
-    <%= model.component.friendlyName %>
-</div>
+<div class="tooltip-wrapper" data-toggle="tooltip" data-placement="bottom" title="<%= model.component.description %>">
+    <div class="component-item" data-component-id='<%= model.component.id %>'>
+        <img class="node-icon" src="<%= model.component.image %>" alt="<%= model.component.friendlyName %>" height="16" width="16">
+        <%= model.component.friendlyName %>
+    </div>
 
-<% if (enableDelete) { %>
+    <% if (enableDelete) { %>
     <a href="#" class="add-link delete" onclick="return false;">
         <h4 class="panel-title">
             delete
         </h4>
     </a>
-<% } %>
+    <% } %>
+</div>

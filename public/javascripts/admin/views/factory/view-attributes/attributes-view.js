@@ -19,7 +19,11 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
 
                 this.listenTo(this.paper, 'blank:pointerdown attributes:remove_others', this.remove);
                 this.listenTo(this.model, 'remove', this.remove);
-                this.listenTo(this.model, 'change:restrictions', this.renderRestrictions);
+                this.listenTo(this.model, 'change:restrictions', function(a, b, options) {
+                    if (options.updateView) {
+                        this.renderRestrictions();
+                    }
+                });
             },
 
             render: function () {
@@ -84,8 +88,6 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
 
                 this.$el.append(geometryAttr.render().el);
 
-                //this.bindInputToNestedField("#x", "position", "x", "NUMBER");
-                //this.bindInputToNestedField("#y", "position", "y", "NUMBER");
                 this.bindInputToNestedField("#width", "size", "width", "NUMBER");
                 this.bindInputToNestedField("#height", "size", "height", "NUMBER");
             },
@@ -97,11 +99,23 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 var restrictionsAttr = new CollapsePanelView({
                     title: "RESTRICTIONS",
                     id: "restrictions",
-                    contentPanel: contentPanel()
+                    contentPanel: contentPanel(this.model.attributes.restrictions)
                 });
 
                 this.$el.append(restrictionsAttr.render().el);
-                this.$("#restrictions-values").html(JSON.stringify(this.model.attributes.restrictions));
+
+                this.bindInputToNestedField("#quantity-on-graph", "restrictions", "quantityOnGraph", "POSITIVE_NUMBER");
+
+                var links = this.model.attributes.restrictions.links;
+                var attributesView = this;
+
+                Object.keys(links).forEach(function(link) {
+                    var targets = links[link].targets;
+                    _.each(targets, function(target, index) {
+                        attributesView.bindInputToNestedField("#" + link + "-" + target.id + "-qty", "restrictions",
+                            "links/" + link + "/targets/" + index + "/quantity", "POSITIVE_NUMBER");
+                    });
+                });
             },
 
             bindInputToNestedField: function (input, filed, nestedAttribute, type) {
@@ -134,6 +148,14 @@ define(["backbone", "underscore", "views/custom/collapse-panel-view",
                 switch (type) {
                     case "NUMBER":
                         return Number(value);
+                    case "POSITIVE_NUMBER": {
+                        var num = Number(value);
+
+                        if (num <= 1)
+                            return 1;
+
+                        return num;
+                    }
                     default:
                         return value;
                 }

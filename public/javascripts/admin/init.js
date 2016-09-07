@@ -37,6 +37,10 @@ require(["/javascripts/config.js"], function () {
             newLink();
         });
 
+        $(window).bind('beforeunload', function(){
+            return 'Are you sure you want to leave?';
+        });
+
         Backbone.history.start();
     });
 
@@ -85,8 +89,10 @@ require(["/javascripts/config.js"], function () {
     function newNode() {
         require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
                 "admin-scripts/admin-new-graph", "admin-scripts/admin-paper",
-                "admin-views/toolbars/new-component-toolbar-view", "controllers/components"],
-            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components) {
+                "admin-views/toolbars/new-component-toolbar-view", "controllers/components", "controllers/dsl_client"],
+            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components, DslClient) {
+                var dsl = DslClient.get();
+
                 window.graph = new AdminGraph();
 
                 window.east = new East({
@@ -105,6 +111,7 @@ require(["/javascripts/config.js"], function () {
                 }).render();
 
                 window.components = Components.getPredefinedNodes();
+                window.components = window.components.concat(dsl.components);
 
                 window.west = new West({
                     listView: new ComponentListView({ collection: window.components, showLinks: false }),
@@ -116,8 +123,10 @@ require(["/javascripts/config.js"], function () {
     function newLink() {
         require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
                 "admin-scripts/admin-new-graph", "admin-scripts/admin-paper",
-                "admin-views/toolbars/new-component-toolbar-view", "controllers/components"],
-            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components) {
+                "admin-views/toolbars/new-component-toolbar-view", "controllers/components", "controllers/dsl_client"],
+            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components, DslClient) {
+                var dsl = DslClient.get();
+
                 window.graph = new AdminGraph();
 
                 window.east = new East({
@@ -136,6 +145,7 @@ require(["/javascripts/config.js"], function () {
                 }).render();
 
                 window.components = Components.getPredefinedLinks();
+                window.components = window.components.concat(dsl.components);
 
                 window.west = new West({
                     listView: new ComponentListView({ collection: window.components, showNodes: false }),

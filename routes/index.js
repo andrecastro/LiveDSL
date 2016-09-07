@@ -22,7 +22,9 @@ module.exports = function(passport) {
                 if (err) { return next(err); }
 
                 if (req.session.lastPage) {
-                    return res.redirect(req.session.lastPage);
+                    var lastPage = req.session.lastPage;
+                    delete req.session.lastPage;
+                    return res.redirect(lastPage);
                 }
 
                 return res.redirect('/');

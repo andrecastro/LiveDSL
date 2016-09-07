@@ -19,6 +19,8 @@ define(["backbone", "jquery-ui"],
                     this.$(".component-item").draggable("destroy");
                 }
 
+                this.$(".tooltip-wrapper").tooltip();
+
                 this.$(".component-item").draggable({
                     cursor: "move",
                     helper: function () {

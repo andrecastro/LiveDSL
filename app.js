@@ -92,7 +92,7 @@ user.use("access admin pages", function (req) {
 app.use(user.middleware());
 
 // mongoose config
-mongoose.connect('mongodb://localhost/passport_local_mongoose');
+mongoose.connect('mongodb://localhost/visual_dsl');
 mongoose.set('debug', true);
 
 // routes

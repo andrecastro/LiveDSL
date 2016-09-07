@@ -27,6 +27,10 @@ require(["/javascripts/config.js"], function () {
             model();
         });
 
+        $(window).bind('beforeunload', function(){
+            return 'Are you sure you want to leave?';
+        });
+
         Backbone.history.start();
     });
 

@@ -24,66 +24,73 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
 
                 if (source) {
                     link.prop('source/element', source.attributes.component.id);
+                    link.prop('oldSource', source);
+
+                    this.updateTargets(source, link);
                 } else {
+                    var oldSource = link.prop('oldSource');
+
+                    if (oldSource) {
+                        this.updateTargets(oldSource, link);
+                    }
+
                     link.prop('source/element', null);
+                    link.prop('oldSource', null);
                 }
 
-                var linksWithTheSameType = this.getLinksWithTheSameTypeOf(link);
-                var sources = new Set(this.getSourcesElementOf(linksWithTheSameType));
-                this.updateSourcesOfLinks(sources, linksWithTheSameType);
-
-                // Update metadata of source
-                Components.update(link.toJSON());
+                this.updateSources(link);
             });
 
             this.on('change:target', function (link) {
                 var source = this.getSourceOf(link);
                 var target = this.getTargetOf(link);
 
+                if (target) {
+                    link.prop('target/element', target.attributes.component.id);
+                } else {
+                    link.prop('target/element', null);
+                }
+
                 if (source) {
-                    var linkComponentId = link.attributes.component.id;
-                    var restrictionsOfSourceForLink = source.attributes.restrictions.links[linkComponentId];
-                    var nodesWithTheSameType = this.getNodesWithTheSameTypeOf(source);
-                    var targets = new Set();
+                    this.updateTargets(source, link);
+                }
+            });
 
-                    if (restrictionsOfSourceForLink) {
-                        targets = new Set(restrictionsOfSourceForLink.targets);
-                    }
-
-                    if (target) {
-                        link.prop('target/element', target.attributes.component.id);
-                        targets.add(target.attributes.component.id);
-                        this.updateTargetsOfNodes(targets, nodesWithTheSameType, linkComponentId);
-                    } else {
-                        link.prop('target/element', null);
-                        targets = new Set(this.getTargetsOfElementForLink(source, linkComponentId));
-                        this.updateTargetsOfNodes(targets, nodesWithTheSameType, linkComponentId);
-                    }
-
-                    // Update metadata of source
-                    Components.update(source.toJSON());
+            this.on('add', function(cell) {
+                // Always add null to the sources of the link when it is added to the graph
+                // because when we drop the link in the paper it is attached to no source
+                if (cell.isLink()) {
+                    this.updateSources(cell);
                 }
             });
         },
 
         addCell: function (cell, options) {
-
             if (!cell.isLink() && this.hasOtherComponentOfSameTypeOf(cell)) {
                 return; // do not add more than one element of same type in this graph, unless is link
             }
 
-            // Always add null to the sources of the link when it is added to the graph
-            // because when we drop the link in the paper it is attached to no source
-            if (cell.isLink()) {
-                var sources = new Set(cell.attributes.restrictions.sources);
-                sources.add(null);
-                cell.prop("restrictions/sources", Array.from(sources), {trigger: true});
-
-                var linksOfSameType = this.getLinksWithTheSameTypeOf(cell);
-                this.updateSourcesOfLinks(sources, linksOfSameType);
-            }
-
             return joint.dia.Graph.prototype.addCell.call(this, cell, options);
+        },
+
+        toJSON: function() {
+            var json = joint.dia.Graph.prototype.toJSON.call(this);
+
+            _.each(json.cells, function(cell) {
+               delete cell.oldSource;
+            });
+
+            return json;
+        },
+
+        updateTargets: function(node, link) {
+            var linkComponentId = link.attributes.component.id;
+            var nodesWithTheSameType = this.getNodesWithTheSameTypeOf(node);
+            var targets = new Set(this.getTargetsOfElementForLink(node, linkComponentId));
+            this.updateTargetsOfNodes(targets, nodesWithTheSameType, linkComponentId);
+
+            // Update metadata of node
+            Components.update(node.toJSON());
         },
 
         updateTargetsOfNodes: function (targets, nodes, linkId) {
@@ -91,15 +98,24 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                 delete node.attributes.restrictions.links[linkId];
 
                 if (targets.size != 0) {
-                    node.prop("restrictions/links/" + linkId + "/targets", Array.from(targets));
+                    node.prop("restrictions/links/" + linkId + "/targets", Array.from(targets), { updateView: true });
                 }
             });
+        },
+
+        updateSources: function(link) {
+            var linksWithTheSameType = this.getLinksWithTheSameTypeOf(link);
+            var sources = new Set(this.getSourcesElementOf(linksWithTheSameType));
+            this.updateSourcesOfLinks(sources, linksWithTheSameType);
+
+            // Update metadata of source
+            Components.update(link.toJSON());
         },
 
         updateSourcesOfLinks: function (sources, links) {
             links.forEach(function (l) {
                 delete l.attributes.restrictions.sources;
-                l.prop("restrictions/sources", Array.from(sources));
+                l.prop("restrictions/sources", Array.from(sources), { updateView: true });
             });
         },
 
@@ -132,7 +148,7 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
         // filter all links from the graph with the same component.id of 'link' and that has the
         // same link.source of component
         getTargetsOfElementForLink: function (element, linkComponentId) {
-            return this.getLinks()
+            var currentTargetsIds = this.getLinks()
                 .filter(function (link) {
                     return link.attributes.component.id == linkComponentId
                         && link.get('source').element == element.attributes.component.id;
@@ -143,6 +159,31 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                 .filter(function (targetElement) {
                     return targetElement != null
                 });
+
+            var oldLinkRestriction = element.attributes.restrictions.links[linkComponentId];
+            var newTargets = [];
+
+            if (oldLinkRestriction) {
+                var oldTargets = oldLinkRestriction.targets;
+
+                currentTargetsIds.forEach(function (currentTargetId) {
+                    var oldTarget = oldTargets.filter(function (oldTarget) {
+                        return oldTarget.id == currentTargetId;
+                    })[0];
+
+                    if (oldTarget) {
+                        newTargets.push(oldTarget);
+                    } else {
+                        newTargets.push({id: currentTargetId, quantity: 1});
+                    }
+                });
+            } else {
+                currentTargetsIds.forEach(function (currentTargetId) {
+                    newTargets.push({id: currentTargetId, quantity: 1});
+                });
+            }
+
+            return newTargets;
         },
 
         handleLinkDeletion: function (link) {
@@ -157,7 +198,7 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                 Components.update(linksWithTheSameType[0].toJSON());
             } else {
                 delete link.attributes.restrictions.sources;
-                link.prop("restrictions/sources", [null]);
+                link.prop("restrictions/sources", [null], { updateView: true });
                 Components.update(link.toJSON());
             }
 
@@ -165,13 +206,7 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
 
             // update targets of source
             if (source) {
-                var linkComponentId = link.attributes.component.id;
-                var nodesWithTheSameType = this.getNodesWithTheSameTypeOf(source);
-                var targets = new Set(this.getTargetsOfElementForLink(source, linkComponentId));
-                this.updateTargetsOfNodes(targets, nodesWithTheSameType, linkComponentId);
-
-                // Update metadata of source
-                Components.update(source.toJSON());
+                this.updateTargets(source, link);
             }
         },
 
@@ -189,12 +224,12 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                 Components.update(nodesSameType[0].toJSON());
             } else {
                 delete element.attributes.restrictions.links;
-                element.prop("restrictions/links", {});
+                element.prop("restrictions/links", {}, { updateView: true });
                 Components.update(element.toJSON());
             }
         },
 
-        hasOtherComponentOfSameTypeOf: function(element) {
+        hasOtherComponentOfSameTypeOf: function (element) {
             return this.getElements().filter(function (e) {
                     return e.attributes.component.id == element.attributes.component.id
                 }).length != 0;

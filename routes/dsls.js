@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var Dsl = require('../models/dsl');
-var ValidationException = require("../models/error/validation_exception");
 
 module.exports = function (passport, user) {
 
@@ -55,7 +54,7 @@ module.exports = function (passport, user) {
             dsl.description = req.body.description;
 
             dsl.save(function (err) {
-                if (err || !dsl) {
+                if (err) {
                     req.flash("error", "Validation error");
                     console.log(err);
                     return res.render('dsls/edit', {dsl: dsl});
@@ -98,17 +97,13 @@ module.exports = function (passport, user) {
                 return next(error);
             }
 
-            try {
-                dsl.addNewComponent(req.body.model);
-            } catch (e) {
-                if (e instanceof ValidationException) {
-                    return res.status(400).json(e.errors);
+            dsl.addNewComponent(req.body.model, function(err) {
+                if (err) {
+                    return res.status(400).json(err.errors);
                 } else {
-                    return res.status(500);
+                    res.sendStatus(200);
                 }
-            }
-
-            res.sendStatus(200);
+            });
         });
     });
 
@@ -120,17 +115,13 @@ module.exports = function (passport, user) {
                 return next(error);
             }
 
-            try {
-                dsl.updateInfo(req.body);
-            } catch (e) {
-                if (e instanceof ValidationException) {
-                    return res.status(400).json(e.errors);
+            dsl.updateInfo(req.body, function(err) {
+                if (err) {
+                    return res.status(400).json(err.errors);
                 } else {
-                    return res.status(500);
+                    res.sendStatus(200);
                 }
-            }
-
-            res.sendStatus(200);
+            });
         });
     });
 
@@ -145,20 +136,6 @@ module.exports = function (passport, user) {
             res.json({metadata: dsl.metadata, components: dsl.getComponents()});
         });
     });
-
-    router.delete("/:id/components/:componentId", user.can('access admin pages'), passport.isLoggedIn,
-        function (req, res, next) {
-            Dsl.findById(req.params.id, function (err, dsl) {
-                if (err || !dsl) {
-                    var error = new Error('Not Found');
-                    error.status = 404;
-                    return next(error);
-                }
-
-                dsl.deleteComponent(req.params.componentId);
-                res.sendStatus(200);
-            });
-        });
 
     return router;
 };

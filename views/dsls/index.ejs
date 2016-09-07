@@ -5,6 +5,7 @@
 
     <link rel="stylesheet"
           href="//fonts.googleapis.com/css?family=Titillium+Web:400,300,700&amp;subset=latin,latin-ext"/>
+    <link rel="stylesheet" href="/stylesheets/pnotify.custom.min.css"/>
     <link rel="stylesheet" href="/vendor/bootstrap.ui/dist/css/bootstrap-ui.min.css"/>
     <link rel="stylesheet" href="/stylesheets/style.css"/>
     <link rel="stylesheet" href="/stylesheets/custom-panel.css"/>
@@ -52,7 +53,9 @@
                         <h2><strong><%= dsl.name %></strong></h2>
                         <div class="panel-actions">
                             <a href="/admin/dsls/edit/<%= dsl.id %>" class="btn-close"><i class="glyphicon glyphicon-cog"></i></a>
-                            <a href="#" onClick="$('#delete-<%= dsl.id %>').submit()" class="btn-close"><i class="glyphicon glyphicon-trash"></i></a>
+                            <a href="#" data-form-id="#delete-<%= dsl.id %>" class="remove btn-close">
+                                <i class="glyphicon glyphicon-trash"></i>
+                            </a>
                             <form method="POST" action="/admin/dsls/<%= dsl.id%>?_method=delete" id="delete-<%= dsl.id%>"></form>
                         </div>
                     </div>

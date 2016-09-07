@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var User = require('./models/user');
 
-mongoose.connect('mongodb://localhost/passport_local_mongoose');
+mongoose.connect('mongodb://localhost/visual_dsl');
 
 var user = new User({
     name: "Admin",
