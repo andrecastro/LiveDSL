@@ -1,4 +1,4 @@
-define(["underscore", "joint", "controllers/components"], function (_, joint, Components) {
+define(["underscore", "joint", "controllers/pallet"], function (_, joint, Pallet) {
 
     var AdminGraph = joint.dia.Graph.extend({
         initialize: function (attrs, opt) {
@@ -14,8 +14,8 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
 
             this.on('change', function (cell, options) {
                 if (!options.translateBy && options.trigger) {
-                    // Update metadata of element changed
-                    Components.update(cell.toJSON());
+                    // Update metamodel of cell changed
+                    Pallet.updateMetamodel(cell.toJSON());
                 }
             });
 
@@ -23,7 +23,7 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                 var source = this.getSourceOf(link);
 
                 if (source) {
-                    link.prop('source/element', source.attributes.component.id);
+                    link.prop('sourceElement', source.attributes.component.id);
                     link.prop('oldSource', source);
 
                     this.updateTargets(source, link);
@@ -34,7 +34,7 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                         this.updateTargets(oldSource, link);
                     }
 
-                    link.prop('source/element', null);
+                    link.prop('sourceElement', null);
                     link.prop('oldSource', null);
                 }
 
@@ -46,9 +46,9 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                 var target = this.getTargetOf(link);
 
                 if (target) {
-                    link.prop('target/element', target.attributes.component.id);
+                    link.prop('targetElement', target.attributes.component.id);
                 } else {
-                    link.prop('target/element', null);
+                    link.prop('targetElement', null);
                 }
 
                 if (source) {
@@ -66,7 +66,7 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
         },
 
         addCell: function (cell, options) {
-            if (!cell.isLink() && this.hasOtherComponentOfSameTypeOf(cell)) {
+            if (!cell.isLink() && this.hasOtherCellOfSameTypeOf(cell)) {
                 return; // do not add more than one element of same type in this graph, unless is link
             }
 
@@ -89,8 +89,8 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
             var targets = new Set(this.getTargetsOfElementForLink(node, linkComponentId));
             this.updateTargetsOfNodes(targets, nodesWithTheSameType, linkComponentId);
 
-            // Update metadata of node
-            Components.update(node.toJSON());
+            // Update metamodel of node
+            Pallet.updateMetamodel(node.toJSON());
         },
 
         updateTargetsOfNodes: function (targets, nodes, linkId) {
@@ -108,8 +108,8 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
             var sources = new Set(this.getSourcesElementOf(linksWithTheSameType));
             this.updateSourcesOfLinks(sources, linksWithTheSameType);
 
-            // Update metadata of source
-            Components.update(link.toJSON());
+            // Update metamodel of source
+            Pallet.updateMetamodel(link.toJSON());
         },
 
         updateSourcesOfLinks: function (sources, links) {
@@ -141,7 +141,7 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
 
         getSourcesElementOf: function (links) {
             return links.map(function (l) {
-                return l.get('source').element
+                return l.get('sourceElement');
             })
         },
 
@@ -151,10 +151,10 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
             var currentTargetsIds = this.getLinks()
                 .filter(function (link) {
                     return link.attributes.component.id == linkComponentId
-                        && link.get('source').element == element.attributes.component.id;
+                        && link.get('sourceElement') == element.attributes.component.id;
                 })
                 .map(function (link) {
-                    return link.attributes.target.element;
+                    return link.get('targetElement');
                 })
                 .filter(function (targetElement) {
                     return targetElement != null
@@ -194,12 +194,12 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                 var sources = new Set(this.getSourcesElementOf(linksWithTheSameType));
                 this.updateSourcesOfLinks(sources, linksWithTheSameType);
 
-                // update metadata of link
-                Components.update(linksWithTheSameType[0].toJSON());
+                // update metamodel of link
+                Pallet.updateMetamodel(linksWithTheSameType[0].toJSON());
             } else {
                 delete link.attributes.restrictions.sources;
                 link.prop("restrictions/sources", [null], { updateView: true });
-                Components.update(link.toJSON());
+                Pallet.updateMetamodel(link.toJSON());
             }
 
             var source = this.getSourceOf(link);
@@ -220,16 +220,16 @@ define(["underscore", "joint", "controllers/components"], function (_, joint, Co
                     graph.updateTargetsOfNodes(newTargetsForLink, nodesSameType, linkComponentId);
                 });
 
-                // update metadata of element
-                Components.update(nodesSameType[0].toJSON());
+                // update metamodel of element
+                Pallet.updateMetamodel(nodesSameType[0].toJSON());
             } else {
                 delete element.attributes.restrictions.links;
                 element.prop("restrictions/links", {}, { updateView: true });
-                Components.update(element.toJSON());
+                Pallet.updateMetamodel(element.toJSON());
             }
         },
 
-        hasOtherComponentOfSameTypeOf: function (element) {
+        hasOtherCellOfSameTypeOf: function (element) {
             return this.getElements().filter(function (e) {
                     return e.attributes.component.id == element.attributes.component.id
                 }).length != 0;

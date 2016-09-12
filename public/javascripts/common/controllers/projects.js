@@ -31,7 +31,7 @@ define(["jquery"], function ($) {
             statusCode: {
                 400: function (res) {
                     if (errorCallback) {
-                        errorCallback.call(res);
+                        errorCallback.call(this, res);
                     }
                 }
             }

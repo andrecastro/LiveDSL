@@ -61,10 +61,10 @@ require(["/javascripts/config.js"], function () {
                     window.graph.fromJSON(JSON.parse(project.model));
                 }
 
-                window.components = project.components;
+                window.pallet = project.metamodel;
 
                 var componentList = new ComponentListView({
-                    collection: window.components
+                    collection: window.pallet
                 });
 
                 window.west = new West({

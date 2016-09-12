@@ -1,6 +1,6 @@
 define(["underscore", "joint", "custom/transform", "views/factory/component-factory",
-        "app-views/factory/attributes-view-factory", "controllers/components"],
-    function (_, joint, Transform, componentFactory, attributesViewFactory, Components) {
+        "app-views/factory/attributes-view-factory", "controllers/pallet"],
+    function (_, joint, Transform, componentFactory, attributesViewFactory, Pallet) {
 
         var Paper = joint.dia.Paper.extend({
             options: _.extend(joint.dia.Paper.prototype.options, {
@@ -15,12 +15,26 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
                         var sources = linkView.model.get('restrictions').sources;
 
                         return _.contains(sources, cellViewS.model.get('component').id) || _.contains(sources, null);
+
                     } else if (linkView.model.get('source').id) {
+
                         var source = this.model.getCell(linkView.model.get('source').id);
                         var linkComponentId = linkView.model.get('component').id;
                         var linkRestriction = source.attributes.restrictions.links[linkComponentId];
 
-                        return linkRestriction == null || _.contains(linkRestriction.targets, cellViewT.model.get('component').id);
+                        // permit connection if there is no restriction
+                        if (linkRestriction == null) {
+                            return true;
+                        }
+
+                        var targetRestriction = linkRestriction.targets.filter(function (target) {
+                            return target.id == cellViewT.model.get('component').id;
+                        })[0];
+
+                        var quantityOfLinksAlreadyConnected =
+                            this.model.getQuantityOfConnectedLinksBetweenNodes(linkComponentId, source, cellViewT.model);
+
+                        return targetRestriction && quantityOfLinksAlreadyConnected < targetRestriction.quantity;
                     }
 
                     return false;
@@ -69,10 +83,10 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
             drop: function (event, ui) {
                 var position = this.clientToLocalPoint({x: ui.position.left, y: ui.position.top});
                 var componentId = $(ui.helper).data("component-id");
-                var model = Components.getLocalComponentById(componentId);
+                var cellMetamodel = Pallet.getCellMetamodelByComponentId(componentId);
 
-                var component = componentFactory(model, position);
-                this.model.addCell(component);
+                var cell = componentFactory(cellMetamodel, position);
+                this.model.addCell(cell);
             }
         });
 

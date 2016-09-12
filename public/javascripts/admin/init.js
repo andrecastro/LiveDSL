@@ -67,14 +67,14 @@ require(["/javascripts/config.js"], function () {
                     title: "METAMODEL DEFINITION"
                 }).render();
 
-                if (dsl.metadata) {
-                    window.graph.fromJSON(JSON.parse(dsl.metadata));
+                if (dsl.modelExample) {
+                    window.graph.fromJSON(JSON.parse(dsl.modelExample));
                 }
 
-                window.components = dsl.components;
+                window.pallet = dsl.pallet;
 
                 var componentList = new ComponentListView({
-                    collection: window.components,
+                    collection: window.pallet,
                     enableNew: true,
                     enableDelete: true
                 });
@@ -89,8 +89,8 @@ require(["/javascripts/config.js"], function () {
     function newNode() {
         require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
                 "admin-scripts/admin-new-graph", "admin-scripts/admin-paper",
-                "admin-views/toolbars/new-component-toolbar-view", "controllers/components", "controllers/dsl_client"],
-            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components, DslClient) {
+                "admin-views/toolbars/new-component-toolbar-view", "controllers/pallet", "controllers/dsl_client"],
+            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Pallet, DslClient) {
                 var dsl = DslClient.get();
 
                 window.graph = new AdminGraph();
@@ -110,11 +110,11 @@ require(["/javascripts/config.js"], function () {
                     title: "NEW NODE"
                 }).render();
 
-                window.components = Components.getPredefinedNodes();
-                window.components = window.components.concat(dsl.components);
+                window.pallet = Pallet.getPredefinedNodes();
+                window.pallet = window.pallet.concat(dsl.pallet);
 
                 window.west = new West({
-                    listView: new ComponentListView({ collection: window.components, showLinks: false }),
+                    listView: new ComponentListView({ collection: window.pallet, showLinks: false }),
                     toolbar: new Toolbar()
                 }).render();
             });
@@ -123,8 +123,8 @@ require(["/javascripts/config.js"], function () {
     function newLink() {
         require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
                 "admin-scripts/admin-new-graph", "admin-scripts/admin-paper",
-                "admin-views/toolbars/new-component-toolbar-view", "controllers/components", "controllers/dsl_client"],
-            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Components, DslClient) {
+                "admin-views/toolbars/new-component-toolbar-view", "controllers/pallet", "controllers/dsl_client"],
+            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Toolbar, Pallet, DslClient) {
                 var dsl = DslClient.get();
 
                 window.graph = new AdminGraph();
@@ -144,11 +144,11 @@ require(["/javascripts/config.js"], function () {
                     title: "NEW NODE"
                 }).render();
 
-                window.components = Components.getPredefinedLinks();
-                window.components = window.components.concat(dsl.components);
+                window.pallet = Pallet.getPredefinedLinks();
+                window.pallet = window.pallet.concat(dsl.pallet);
 
                 window.west = new West({
-                    listView: new ComponentListView({ collection: window.components, showNodes: false }),
+                    listView: new ComponentListView({ collection: window.pallet, showNodes: false }),
                     toolbar: new Toolbar()
                 }).render();
             });

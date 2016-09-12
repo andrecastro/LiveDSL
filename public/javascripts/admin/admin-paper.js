@@ -1,6 +1,6 @@
 define(["underscore", "joint", "custom/transform", "views/factory/component-factory",
-        "admin-views/factory/attributes-view-factory", "controllers/components"],
-    function (_, joint, Transform, componentFactory, attributesViewFactory, Components) {
+        "admin-views/factory/attributes-view-factory", "controllers/pallet"],
+    function (_, joint, Transform, componentFactory, attributesViewFactory, Pallet) {
 
         var Paper = joint.dia.Paper.extend({
             options: _.extend(joint.dia.Paper.prototype.options, {
@@ -52,10 +52,10 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
             drop: function (event, ui) {
                 var position = this.clientToLocalPoint({x: ui.position.left, y: ui.position.top});
                 var componentId = $(ui.helper).data("component-id");
-                var model = Components.getLocalComponentById(componentId);
+                var cellMetamodel = Pallet.getCellMetamodelByComponentId(componentId);
 
-                var component = componentFactory(model, position);
-                this.model.addCell(component);
+                var cell = componentFactory(cellMetamodel, position);
+                this.model.addCell(cell);
             }
         });
 

@@ -36,6 +36,30 @@ helpers.retrieveEscapedChars = function(obj) {
     return true;
 };
 
+helpers.deepEquals = function(o1, o2) {
+
+    if (o1 != null && o2 == null)
+        return false;
+
+    if (o1 == null && o2 != null)
+        return false;
+
+    if (o1 == null && o2 == null) {
+        return true;
+    }
+
+    var k1 = Object.keys(o1).sort();
+    var k2 = Object.keys(o2).sort();
+    if (k1.length != k2.length) return false;
+    return k1.zip(k2, function(keyPair) {
+        if(typeof o1[keyPair[0]] == typeof o2[keyPair[1]] == "object"){
+            return helpers.deepEquals(o1[keyPair[0]], o2[keyPair[1]])
+        } else {
+            return o1[keyPair[0]] == o2[keyPair[1]];
+        }
+    }).all();
+};
+
 function replaceIllegalChar(obj, key) {
     var newkey = key;
 

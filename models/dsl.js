@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ValidationException = require("./error/validation_exception");
 var EscapeHelper = require("../helper/escape_key_helper");
+var Set = require('set-component');
 
 var DslSchema = new Schema({
     name: {
@@ -14,23 +15,26 @@ var DslSchema = new Schema({
         type: String,
         required: [true, 'Description is required']
     },
-    metadata: {
+    modelExample: {
         type: String
     },
-    components: {
+    metamodel: {
+        type: Schema.Types.Mixed
+    },
+    pallet: {
         type: Array
     }
 });
 
-DslSchema.methods.addNewComponent = function (component, callback) {
+DslSchema.methods.addNewCellMetamodelToPallet = function (cell, callback) {
     try {
-        validateComponent(this, component)
+        validateCell(this, cell)
     } catch (e) {
         return callback.call(this, e);
     }
 
-    EscapeHelper.escapeKeys(component);
-    this.components.push(component);
+    EscapeHelper.escapeKeys(cell);
+    this.pallet.push(cell);
 
     this.save(function (err) {
         callback.call(this, err);
@@ -38,73 +42,104 @@ DslSchema.methods.addNewComponent = function (component, callback) {
 };
 
 DslSchema.methods.updateInfo = function (info, callback) {
-    var newComponents = info.components;
-    var metadadata = info.metadata;
+    var newPallet = info.pallet;
+    var modelExample = info.modelExample;
 
     try {
-        for (var index in newComponents) {
-            newComponents[index] = this.prepareToUpdateComponent(newComponents[index]);
+        for (var index in newPallet) {
+            newPallet[index] = this.prepareToUpdateCell(newPallet[index]);
         }
     } catch (e) {
         return callback.call(this, e);
     }
 
-    this.components = newComponents;
-    this.metadata = metadadata;
-    this.markModified('components');
+    this.modelExample = modelExample;
+
+    this.pallet = newPallet;
+    this.markModified('pallet');
+
+    this.calculateMetamodel();
+    this.markModified('metamodel');
+
     this.save(function (err) {
         callback.call(this, err);
     });
 };
 
-DslSchema.methods.getComponents = function (type) {
-    var components = this.components.map(function (component) {
-        EscapeHelper.retrieveEscapedChars(component);
-        return component;
+DslSchema.methods.calculateMetamodel = function() {
+    var metamodel = new Set();
+
+    var cells = JSON.parse(this.modelExample).cells;
+
+    for (var index in cells) {
+        var cell = cells[index];
+        var cellMetamodel = this.pallet.filter(function (cellMetamodel) {
+            return cellMetamodel.component.id == cell.component.id;
+        })[0];
+        metamodel.add(cellMetamodel);
+    }
+
+    this.metamodel = metamodel.values();
+};
+
+DslSchema.methods.getPallet = function (type) {
+    var pallet = this.pallet.map(function (cell) {
+        EscapeHelper.retrieveEscapedChars(cell);
+        return cell;
     });
 
     if (type) {
-        return components.filter(function (component) {
-            return component.component.type == type;
+        return pallet.filter(function (cell) {
+            return cell.component.type == type;
         });
     }
 
-    return components;
+    return pallet;
 };
 
-DslSchema.methods.getComponentById = function (componentId) {
-    var components = this.components.filter(function (component) {
-        return component.component.id == componentId;
-    }).map(function (component) {
-        EscapeHelper.retrieveEscapedChars(component);
-        return component;
+DslSchema.methods.getMetamodel = function () {
+    if (this.metamodel)
+        return this.metamodel.map(function(cellMetamodel) {
+            EscapeHelper.retrieveEscapedChars(cellMetamodel);
+            return cellMetamodel;
+        });
+
+    return [];
+};
+
+DslSchema.methods.getCellMetamodelByComponentId = function (componentId) {
+    var cells = this.pallet.filter(function (cell) {
+        return cell.component.id == componentId;
+    }).map(function (cell) {
+        EscapeHelper.retrieveEscapedChars(cell);
+        return cell;
     });
 
-    return components[0];
+    return cells[0];
 };
 
-DslSchema.methods.prepareToUpdateComponent = function (newComponent) {
-    validateEdit(newComponent);
-    EscapeHelper.escapeKeys(newComponent);
-    return newComponent;
+DslSchema.methods.prepareToUpdateCell = function (newCell) {
+    validateEdit(newCell);
+    EscapeHelper.escapeKeys(newCell);
+    return newCell;
 };
 
-function validateEdit(component) {
-    if (component == null) {
-        throw new ValidationException(["Component can not be null"]);
+function validateEdit(cell) {
+    if (cell == null) {
+        throw new ValidationException(["Cell metamodel can not be null"]);
     }
 
     var errors = [];
 
-    if (!component.component.id || !component.component.id.trim()) {
+    if (!cell.component.id || !cell.component.id.trim()) {
         errors.push("Component id is mandatory");
     }
 
-    if (!component.component.friendlyName || !component.component.friendlyName.trim()) {
+    if (!cell.component.friendlyName || !cell.component.friendlyName.trim()) {
         errors.push("Component name is mandatory");
     }
 
-    if (!component.component.image || !component.component.image.trim()) {
+    if (!cell.component.image || !cell.component.image.trim()) {
         errors.push("Component image is mandatory");
     }
 
@@ -113,28 +148,27 @@ function validateEdit(component) {
     }
 }
 
-
-function validateComponent(dsl, component) {
-    if (component == null) {
-        throw new ValidationException(["Component can not be null"]);
+function validateCell(dsl, cell) {
+    if (cell == null) {
+        throw new ValidationException(["Cell metamodel can not be null"]);
     }
 
     var errors = [];
 
-    if (!component.component.id || !component.component.id.trim()) {
+    if (!cell.component.id || !cell.component.id.trim()) {
         errors.push("Component id is mandatory");
     }
 
-    if (!component.component.friendlyName || !component.component.friendlyName.trim()) {
+    if (!cell.component.friendlyName || !cell.component.friendlyName.trim()) {
         errors.push("Component name is mandatory");
     }
 
-    if (!component.component.image || !component.component.image.trim()) {
+    if (!cell.component.image || !cell.component.image.trim()) {
         errors.push("Component image is mandatory");
     }
 
-    var repeatedComponentId = dsl.components.filter(function (savedComponent) {
-        return savedComponent.component.id == component.component.id;
+    var repeatedComponentId = dsl.pallet.filter(function (savedCell) {
+        return savedCell.component.id == cell.component.id;
     });
 
     if (repeatedComponentId.length != 0) {
@@ -145,6 +179,5 @@ function validateComponent(dsl, component) {
         throw new ValidationException(errors);
     }
 }
-
 
 module.exports = mongoose.model('Dsl', DslSchema);

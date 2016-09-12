@@ -1,8 +1,8 @@
-define(["jquery", "joint"], function ($, joint) {
+define(["joint"], function (joint) {
 
-    function Components() {}
+    function Pallet() {}
 
-    Components.prototype.getPredefinedNodes = function() {
+    Pallet.prototype.getPredefinedNodes = function() {
         var basic = new joint.shapes.basic.Rect({
             size: {width: 100, height: 30},
             attrs: {rect: {fill: 'blue'}, text: {text: "Basic node", fill: 'white'}},
@@ -78,7 +78,7 @@ define(["jquery", "joint"], function ($, joint) {
         return nodes;
     };
 
-    Components.prototype.getPredefinedLinks = function() {
+    Pallet.prototype.getPredefinedLinks = function() {
         var basicLink = new joint.dia.Link({
             smooth: false,
             attrs: {
@@ -92,6 +92,8 @@ define(["jquery", "joint"], function ($, joint) {
                 image: "/images/link.png",
                 type: "LINK"
             },
+            sourceElement: null,
+            targetElement: null,
             restrictions: {
                 sources: [null]
             },
@@ -106,44 +108,46 @@ define(["jquery", "joint"], function ($, joint) {
         return links;
     };
 
-    Components.prototype.update = function (component) {
-        this.prepareToUpdate(component);
-        var savedComponent = this.getLocalComponentById(component.component.id);
-        var index = window.components.indexOf(savedComponent);
+    Pallet.prototype.updateMetamodel = function (newCellMetamodel) {
+        this.prepareToUpdate(newCellMetamodel);
+        var cellMetamodel = this.getCellMetamodelByComponentId(newCellMetamodel.component.id);
+        var index = window.pallet.indexOf(cellMetamodel);
 
-        window.components[index] = component;
+        window.pallet[index] = newCellMetamodel;
         window.west.render();
     };
 
-    Components.prototype.delete = function(componentId) {
+    Pallet.prototype.deleteByComponentId = function(componentId) {
         window.graph.getCells().filter(function (cell) {
             return cell.attributes.component.id == componentId;
         }).forEach(function (cell) {
             cell.remove();
         });
 
-        var savedComponent = this.getLocalComponentById(componentId);
-        var index = window.components.indexOf(savedComponent);
-        window.components.splice(index, 1);
+        var cellMetamodel = this.getCellMetamodelByComponentId(componentId);
+        var index = window.pallet.indexOf(cellMetamodel);
+        window.pallet.splice(index, 1);
     };
 
-    Components.prototype.getLocalComponentById = function(id) {
-        return window.components.filter(function(component) { return component.component.id == id })[0];
+    Pallet.prototype.getCellMetamodelByComponentId = function(componentId) {
+        return window.pallet.filter(function(cell) { return cell.component.id == componentId })[0];
     };
 
-    Components.prototype.prepareToUpdate = function (component) {
-        delete component.id; //make sure the id is deleted
+    Pallet.prototype.prepareToUpdate = function (newCellMetamodel) {
+        delete newCellMetamodel.id; //make sure the id is deleted from metamodel
 
-        if (component.component.type == "LINK") {
-            delete component.oldSource;
-            component.vertices = [];
-            component.source = { id: null, element: null };
-            component.target = { id: null, element: null };
+        if (newCellMetamodel.component.type == "LINK") {
+            delete newCellMetamodel.oldSource;
+            newCellMetamodel.vertices = [];
+            newCellMetamodel.source = { id: null};
+            newCellMetamodel.target = { id: null};
+            newCellMetamodel.sourceElement = null;
+            newCellMetamodel.targetElement = null;
         } else {
-            component.position.x = null;
-            component.position.y = null;
+            newCellMetamodel.position.x = null;
+            newCellMetamodel.position.y = null;
         }
     };
 
-    return new Components();
+    return new Pallet();
 });

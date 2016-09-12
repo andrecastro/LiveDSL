@@ -111,7 +111,7 @@ module.exports = function (passport) {
                 return next(error);
             }
 
-            res.json({model: project.model, components: project.getAvailableComponents()});
+            res.json({ model: project.model, metamodel: project.getMetamodel() });
         });
     });
 

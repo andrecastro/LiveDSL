@@ -15,14 +15,14 @@ define(["jquery"], function ($) {
         return response;
     };
 
-    DslClient.prototype.updateInfo = function(components, metadata, successCallback, errorCallback) {
+    DslClient.prototype.updateInfo = function(pallet, modelExample, successCallback, errorCallback) {
         var url = "/admin/dsls/" + currentDsl + "/update-info";
 
         $.ajax({
             type: "PUT",
             contentType: "application/json",
             url: url,
-            data: JSON.stringify({ components:  components,  metadata: JSON.stringify(metadata) }),
+            data: JSON.stringify({ pallet:  pallet,  modelExample: JSON.stringify(modelExample) }),
             success: function() {
                 if (successCallback) {
                     successCallback.call();
@@ -31,7 +31,30 @@ define(["jquery"], function ($) {
             statusCode: {
                 400: function(res) {
                     if (errorCallback) {
-                        errorCallback.call(res);
+                        errorCallback.call(this, res);
+                    }
+                }
+            }
+        });
+    };
+
+    DslClient.prototype.saveCellMetamodel = function (cellMetamodel, successCallback, errorCallback) {
+        var url = "/admin/dsls/" + currentDsl + "/cell-metamodel";
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: url,
+            data: JSON.stringify({ metamodel:  cellMetamodel }),
+            success: function() {
+                if (successCallback) {
+                    successCallback.call();
+                }
+            },
+            statusCode: {
+                400: function(res) {
+                    if (errorCallback) {
+                        errorCallback.call(this, res);
                     }
                 }
             }

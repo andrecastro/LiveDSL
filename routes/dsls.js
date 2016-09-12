@@ -16,7 +16,7 @@ module.exports = function (passport, user) {
     });
 
     router.post('/', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
-        var dsl = new Dsl({name: req.body.name, description: req.body.description});
+        var dsl = new Dsl({ name: req.body.name, description: req.body.description });
 
         dsl.save(function (err) {
             if (err) {
@@ -89,7 +89,7 @@ module.exports = function (passport, user) {
     });
 
 
-    router.post("/:id/new-component", passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
+    router.post("/:id/cell-metamodel", passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
         Dsl.findById(req.params.id, function (err, dsl) {
             if (err || !dsl) {
                 var error = new Error('Not Found');
@@ -97,7 +97,7 @@ module.exports = function (passport, user) {
                 return next(error);
             }
 
-            dsl.addNewComponent(req.body.model, function(err) {
+            dsl.addNewCellMetamodelToPallet(req.body.metamodel, function(err) {
                 if (err) {
                     return res.status(400).json(err.errors);
                 } else {
@@ -133,7 +133,7 @@ module.exports = function (passport, user) {
                 return next(error);
             }
 
-            res.json({metadata: dsl.metadata, components: dsl.getComponents()});
+            res.json({ modelExample: dsl.modelExample, pallet: dsl.getPallet() });
         });
     });
 

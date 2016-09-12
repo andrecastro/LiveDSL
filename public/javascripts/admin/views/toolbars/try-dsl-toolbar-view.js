@@ -23,10 +23,10 @@ define(["backbone", "underscore", "text!admin-templates/toolbars/try-dsl-toolbar
             save: function(e) {
                 e.stopImmediatePropagation();
 
-                var components = window.components;
-                var metadata = window.graph.toJSON();
+                var pallet = window.pallet;
+                var modelExample = window.graph.toJSON();
 
-                Dsls.updateInfo(components, metadata, function() {
+                Dsls.updateInfo(pallet, modelExample, function() {
                     notify("success", 'Successfully saved!');
                 }, function(res) {
                     var errorMessage = res.responseJSON.map(function(error) { return "- " + error; }).join("\n");

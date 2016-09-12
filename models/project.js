@@ -25,22 +25,18 @@ var ProjectSchema = new Schema({
     dsl: {
         type: ObjectId, ref: 'Dsl',
         required: [true, 'DSL is required']
+    },
+    currentMetamodel: {
+        type: Schema.Types.Mixed
     }
 });
 
-ProjectSchema.methods.getAvailableComponents = function() {
-    var availableComponents = new Set();
-
-    if (this.dsl.metadata) {
-        var cells = JSON.parse(this.dsl.metadata).cells;
-
-        for (var index in cells) {
-            var cell = cells[index];
-            availableComponents.add(this.dsl.getComponentById(cell.component.id));
-        }
+ProjectSchema.methods.getMetamodel = function() {
+    if (this.currentMetamodel) {
+        return this.currentMetamodel;
     }
 
-    return availableComponents.values();
+    return this.dsl.getMetamodel();
 };
 
 var Project = mongoose.model('Project', ProjectSchema);

@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "text!admin-templates/toolbars/new-toolbar-template.html",
-        "custom/pnotify-bootstrap"],
-    function (Backbone, _, toolbarTemplate, notify) {
+        "custom/pnotify-bootstrap", "controllers/dsl_client"],
+    function (Backbone, _, toolbarTemplate, notify, Dsl) {
 
         return Backbone.View.extend({
             template: _.template(toolbarTemplate),
@@ -23,35 +23,25 @@ define(["backbone", "underscore", "text!admin-templates/toolbars/new-toolbar-tem
             save: function(e) {
                 e.stopImmediatePropagation();
 
-                var url = "/admin/dsls/" + currentDsl + "/new-component";
-                var currentComponent = this.getComponent();
-                $.ajax({
-                    type: "POST",
-                    contentType: "application/json",
-                    url: url,
-                    data: JSON.stringify({ model:  currentComponent }),
-                    success: function() {
-                        notify("success", 'Successfully saved!');
-                        window.router.navigate("/", {trigger: true});
-                    },
-                    statusCode: {
-                        400: function(res) {
-                            var errorMessage = res.responseJSON.map(function(error) { return "- " + error; }).join("\n");
-                            notify("error", errorMessage);
-                        }
-                    }
+                var cellMetamodel = this.getCellMetamodel();
+                Dsl.saveCellMetamodel(cellMetamodel, function() {
+                    notify("success", 'Successfully saved!');
+                    window.router.navigate("/", { trigger: true });
+                }, function (res) {
+                    var errorMessage = res.responseJSON.map(function(error) { return "- " + error; }).join("\n");
+                    notify("error", errorMessage);
                 });
             },
 
-            getComponent: function() {
-                var component = graph.toJSON().cells[0];
+            getCellMetamodel: function() {
+                var cell = graph.toJSON().cells[0];
 
-                if (component) {
-                    delete component.id;
-                    delete component.position;
+                if (cell) {
+                    delete cell.id;
+                    delete cell.position;
                 }
 
-                return component;
+                return cell;
             }
         });
     });
