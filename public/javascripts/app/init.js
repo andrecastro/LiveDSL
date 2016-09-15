@@ -57,11 +57,12 @@ require(["/javascripts/config.js"], function () {
                     title: "MODEL"
                 }).render();
 
-                if (project.model) {
-                    window.graph.fromJSON(JSON.parse(project.model));
-                }
-
                 window.pallet = project.metamodel;
+                window.dslMetamodel = project.dslMetamodel;
+
+                if (project.model) {
+                    window.graph.addCells(JSON.parse(project.model).cells);
+                }
 
                 var componentList = new ComponentListView({
                     collection: window.pallet

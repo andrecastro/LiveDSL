@@ -21,8 +21,8 @@ define(["jquery"], function ($) {
         $.ajax({
             type: "PUT",
             contentType: "application/json",
-            url: "/projects/" + currentProject + "/save-model",
-            data: JSON.stringify({model: JSON.stringify(model)}),
+            url: "/projects/" + currentProject + "/modelling",
+            data: JSON.stringify({ metamodel:  window.pallet,  model: JSON.stringify(model) }),
             success: function () {
                 if (successCallback) {
                     successCallback.call();
@@ -36,6 +36,10 @@ define(["jquery"], function ($) {
                 }
             }
         });
+    };
+
+    Projects.prototype.getCellMetamodelFromDslMetamodel = function (componentId) {
+        return window.dslMetamodel.filter(function(cell) { return cell.component.id == componentId })[0];
     };
 
 

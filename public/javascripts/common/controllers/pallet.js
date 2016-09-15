@@ -110,7 +110,7 @@ define(["joint"], function (joint) {
 
     Pallet.prototype.updateMetamodel = function (newCellMetamodel) {
         this.prepareToUpdate(newCellMetamodel);
-        var cellMetamodel = this.getCellMetamodelByComponentId(newCellMetamodel.component.id);
+        var cellMetamodel = getMetadataByComponentId(newCellMetamodel.component.id);
         var index = window.pallet.indexOf(cellMetamodel);
 
         window.pallet[index] = newCellMetamodel;
@@ -124,13 +124,19 @@ define(["joint"], function (joint) {
             cell.remove();
         });
 
-        var cellMetamodel = this.getCellMetamodelByComponentId(componentId);
+        var cellMetamodel = getMetadataByComponentId(componentId);
         var index = window.pallet.indexOf(cellMetamodel);
         window.pallet.splice(index, 1);
     };
 
     Pallet.prototype.getCellMetamodelByComponentId = function(componentId) {
-        return window.pallet.filter(function(cell) { return cell.component.id == componentId })[0];
+        var cellMetamodel = getMetadataByComponentId(componentId);
+
+        if (cellMetamodel) {
+            return JSON.parse(JSON.stringify(cellMetamodel)); // make a copy of the original object
+        }
+
+        return null;
     };
 
     Pallet.prototype.prepareToUpdate = function (newCellMetamodel) {
@@ -148,6 +154,12 @@ define(["joint"], function (joint) {
             newCellMetamodel.position.y = null;
         }
     };
+
+    // This function do not make a copy of the object
+    // if you change the object it will change in the array
+    function getMetadataByComponentId(componentId) {
+        return window.pallet.find(function(cell) { return cell.component.id == componentId });
+    }
 
     return new Pallet();
 });

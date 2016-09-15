@@ -3,6 +3,8 @@ var mongoose = require('mongoose'),
     ObjectId = Schema.ObjectId;
 
 var Set = require('set-component');
+var EscapeHelper = require("../helper/escape_key_helper");
+var deepEqual = require('deep-equal')
 
 
 var ProjectSchema = new Schema({
@@ -33,11 +35,42 @@ var ProjectSchema = new Schema({
 
 ProjectSchema.methods.getMetamodel = function() {
     if (this.currentMetamodel) {
-        return this.currentMetamodel;
+        var metamodel = this.currentMetamodel.map(function (cellMetamodel) {
+            EscapeHelper.retrieveEscapedChars(cellMetamodel);
+            return cellMetamodel;
+        });
+
+        return metamodel;
     }
 
     return this.dsl.getMetamodel();
 };
+
+ProjectSchema.methods.getDslMetamodel = function() {
+    return this.dsl.getMetamodel();
+};
+
+ProjectSchema.methods.updateInfo = function(metamodel, model, callback) {
+
+    if (!deepEqual(metamodel, this.getDslMetamodel())) {
+        var newMetamodel = metamodel.map(function (cellMetamodel) {
+            EscapeHelper.escapeKeys(cellMetamodel);
+            return cellMetamodel;
+        });
+
+        this.currentMetamodel = newMetamodel;
+        this.markModified('currentMetamodel');
+    }
+
+    this.model = model;
+    this.save(function (err) {
+        callback.call(this, err);
+    });
+
+};
+
+
+
 
 var Project = mongoose.model('Project', ProjectSchema);
 

@@ -111,21 +111,20 @@ module.exports = function (passport) {
                 return next(error);
             }
 
-            res.json({ model: project.model, metamodel: project.getMetamodel() });
+            res.json({ model: project.model, metamodel: project.getMetamodel(), dslMetamodel: project.getDslMetamodel() });
         });
     });
 
 
-    router.put("/:id/save-model", passport.isLoggedIn, function (req, res, next) {
-        Project.findById(req.params.id).where('user').equals(req.user.id).exec(function (err, project) {
+    router.put("/:id/modelling", passport.isLoggedIn, function (req, res, next) {
+        Project.findById(req.params.id).where('user').equals(req.user.id).populate('dsl').exec(function (err, project) {
             if (err || !project) {
                 var error = new Error('Not Found');
                 error.status = 404;
                 return next(error);
             }
 
-            project.model = req.body.model;
-            project.save(function (err) {
+            project.updateInfo(req.body.metamodel, req.body.model, function (err) {
                 if (err) {
                     return res.status(500);
                 }

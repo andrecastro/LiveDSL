@@ -21,7 +21,8 @@
 }
 
 .available-cell g.scalable {
-    stroke: lightgreen;
+    stroke: red;
+    stroke-dasharray: 3;
     stroke-width: 5px;
     fill: none;
 }
