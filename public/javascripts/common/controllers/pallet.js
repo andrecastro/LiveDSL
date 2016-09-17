@@ -149,6 +149,7 @@ define(["joint"], function (joint) {
             newCellMetamodel.target = { id: null};
             newCellMetamodel.sourceElement = null;
             newCellMetamodel.targetElement = null;
+            newCellMetamodel.labels.splice(1, 1);
         } else {
             newCellMetamodel.position.x = null;
             newCellMetamodel.position.y = null;

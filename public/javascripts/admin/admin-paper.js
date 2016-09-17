@@ -1,6 +1,6 @@
-define(["underscore", "joint", "custom/transform", "views/factory/component-factory",
+define(["underscore", "joint", "custom/transform", "admin-views/cardinality-view", "views/factory/component-factory",
         "admin-views/factory/attributes-view-factory", "controllers/pallet"],
-    function (_, joint, Transform, componentFactory, attributesViewFactory, Pallet) {
+    function (_, joint, Transform, CardinalityView, componentFactory, attributesViewFactory, Pallet) {
 
         var Paper = joint.dia.Paper.extend({
             options: _.extend(joint.dia.Paper.prototype.options, {
@@ -15,6 +15,10 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
                 this.on('cell:pointerdown add:cell', function (cellView) {
                     self.renderTransform(cellView);
                     self.renderAttributes(cellView);
+                });
+
+                this.on('add:cell', function (cellView) {
+                    self.renderCardinality(cellView);
                 });
 
                 this.$el.droppable({
@@ -41,7 +45,13 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
                 }
 
                 var freeTransform = new Transform({cellView: cellView});
+
                 freeTransform.render();
+            },
+
+            renderCardinality: function (cellView) {
+                var cardinalityView = new CardinalityView({cellView: cellView});
+                cardinalityView.render();
             },
 
             renderAttributes: function (cellView) {

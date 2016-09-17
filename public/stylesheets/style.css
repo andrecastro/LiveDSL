@@ -33,6 +33,21 @@
     fill: none;
 }
 
+.alert-dsl {
+    padding: 9px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    margin-left: 75px;
+    margin-top: 1px;
+}
+
+.btn-mini {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 2px;
+}
+
 #main-admin {
     margin-top: 30px;
 }
