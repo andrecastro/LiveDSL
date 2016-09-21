@@ -37,6 +37,8 @@ require(["/javascripts/config.js"], function () {
                 "admin-scripts/admin-graph", "admin-scripts/admin-paper", "controllers/solicitations"],
             function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Solicitations) {
                 var solicitation = Solicitations.get();
+                window.pallet = solicitation.metamodel;
+                window.dslMetamodel = solicitation.dslMetamodel;
 
                 window.graph = new AdminGraph();
 
@@ -46,7 +48,8 @@ require(["/javascripts/config.js"], function () {
                 }).render();
 
                 var paper = new AdminPaper({
-                    model: window.graph
+                    model: window.graph,
+                    compareCardinalityWithDsl: true
                 });
 
                 window.center = new Center({
@@ -57,8 +60,6 @@ require(["/javascripts/config.js"], function () {
                 if (solicitation.model) {
                     window.graph.fromJSON(solicitation.model);
                 }
-
-                window.pallet = solicitation.metamodel;
             });
     }
 });

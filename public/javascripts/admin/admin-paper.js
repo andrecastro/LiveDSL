@@ -50,7 +50,10 @@ define(["underscore", "joint", "custom/transform", "admin-views/cardinality-view
             },
 
             renderCardinality: function (cellView) {
-                var cardinalityView = new CardinalityView({cellView: cellView});
+                var cardinalityView = new CardinalityView({
+                    cellView: cellView,
+                    compareWithDsl: this.options.compareCardinalityWithDsl
+                });
                 cardinalityView.render();
             },
 

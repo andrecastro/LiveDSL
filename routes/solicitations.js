@@ -30,7 +30,8 @@ module.exports = function (passport, user) {
             .exec(function (err, solicitation) {
                 res.json({
                     model: solicitation.getModel(),
-                    metamodel: solicitation.getMetamodel()
+                    metamodel: solicitation.getMetamodel(),
+                    dslMetamodel: solicitation.dsl.getMetamodel()
                 });
             });
     });

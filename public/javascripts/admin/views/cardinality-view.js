@@ -38,11 +38,18 @@ define(["underscore", "backbone", "joint", "geometry", "text!admin-templates/car
 
                 this.listenToOnce(this.source, "change:restrictions", this.render);
 
+                var quantity = this.getLinkRestrictionsQuantity();
+                var color = 'black';
+
+                if (this.options.compareWithDsl && this.isTargetDifferent(quantity)) {
+                    color = 'red';
+                }
+
                 this.cell.label(1, {
                     position: 0.95,
                     cardinality: true,
                     attrs: {
-                        text: { text: this.getLinkRestrictions() }
+                        text: { fill: color,text: quantity }
                     }
                 });
 
@@ -56,7 +63,8 @@ define(["underscore", "backbone", "joint", "geometry", "text!admin-templates/car
         },
 
         renderElementView: function () {
-            this.$el.html(this.template({value: this.cell.get("restrictions").quantityOnGraph}));
+            var quantity = this.cell.get("restrictions").quantityOnGraph;
+            this.$el.html(this.template({value: quantity }));
 
             var boundingBox = this.cellView.getBBox();
             var angle = g.normalizeAngle(this.cell.get('angle') || 0);
@@ -69,11 +77,16 @@ define(["underscore", "backbone", "joint", "geometry", "text!admin-templates/car
                 'top': boundingBox.y,
                 'transform': rotateFunction,
                 '-webkit-transform': rotateFunction,
-                '-ms-transform': rotateFunction
+                '-ms-transform': rotateFunction,
+                'color': 'black'
             });
+
+            if (this.options.compareWithDsl && this.isQuantityDifferent()) {
+                this.$el.css("color", "red");
+            }
         },
 
-        getLinkRestrictions: function () {
+        getLinkRestrictionsQuantity: function () {
             var source = this.graph.getCell(this.cell.get("source").id);
             var linkRestriction = source.get("restrictions").links[this.cell.get("component").id];
 
@@ -83,11 +96,49 @@ define(["underscore", "backbone", "joint", "geometry", "text!admin-templates/car
                return target.id == link.get("targetElement");
             });
 
-            if (targetRestriction) {
-                return targetRestriction.quantity;
+            return targetRestriction.quantity;
+        },
+
+        isQuantityDifferent: function () {
+            var quantity = this.cell.get("restrictions").quantityOnGraph;
+            var metamodelFromDsl = this.getMetamodelFromDsl(this.cell.get("component").id);
+
+            if (metamodelFromDsl)
+                return quantity != metamodelFromDsl.restrictions.quantityOnGraph;
+
+            return true;
+        },
+
+        isTargetDifferent: function (quantity) {
+            var source = this.graph.getCell(this.cell.get("source").id);
+            var sourceMetamodel = this.getMetamodelFromDsl(source.get("component").id);
+
+            if (!sourceMetamodel) {
+                return true;
             }
 
-            return "NaN";
+            var linkRestriction = sourceMetamodel.restrictions.links[this.cell.get("component").id];
+            var link = this.cell;
+
+            if (!linkRestriction) {
+                return true;
+            }
+
+            var targetRestriction = linkRestriction.targets.find(function (target) {
+                return target.id == link.get("targetElement");
+            });
+
+            if (!targetRestriction) {
+                return true;
+            }
+
+            return targetRestriction.quantity != quantity;
+        },
+
+        getMetamodelFromDsl: function (componentId) {
+            return window.dslMetamodel.filter(function (cell) {
+                return cell.component.id == componentId
+            })[0];
         }
     });
 
