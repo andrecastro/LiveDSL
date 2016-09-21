@@ -17,7 +17,7 @@ require(["/javascripts/config.js"], function () {
 
         var DslRouter = Backbone.Router.extend({
             routes: {
-                "": "tryDsl",
+                "": "metamodeling",
                 "new-node": "createNewNode",
                 "new-link": "createNewLink"
             }
@@ -25,8 +25,8 @@ require(["/javascripts/config.js"], function () {
 
         window.router = new DslRouter();
 
-        window.router.on('route:tryDsl', function () {
-            tryDsl();
+        window.router.on('route:metamodeling', function () {
+            metamodeling();
         });
 
         window.router.on('route:createNewNode', function () {
@@ -44,7 +44,7 @@ require(["/javascripts/config.js"], function () {
         Backbone.history.start();
     });
 
-    function tryDsl() {
+    function metamodeling() {
         require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
                 "admin-scripts/admin-graph", "admin-scripts/admin-paper", "admin-views/toolbars/try-dsl-toolbar-view",
                 "controllers/dsl_client"],

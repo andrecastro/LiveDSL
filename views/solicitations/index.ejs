@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet"
+          href="//fonts.googleapis.com/css?family=Titillium+Web:400,300,700&amp;subset=latin,latin-ext"/>
+    <link rel="stylesheet" href="/stylesheets/pnotify.custom.min.css"/>
+    <link rel="stylesheet" href="/vendor/bootstrap.ui/dist/css/bootstrap-ui.min.css"/>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
+    <link rel="stylesheet" href="/stylesheets/custom-panel.css"/>
+
+    <script data-main="/javascripts/admin" src="/vendor/requirejs/require.js"></script>
+
+</head>
+
+<body class="site has-navbar-fixed-top">
+
+<%- include ../partials/_header.ejs %>
+
+<main id="main-admin" role="main" class="container">
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">Solicitations</li>
+        <li class="breadcrumb-item active">List</li>
+    </ol>
+
+    <%- include ../partials/_flash.ejs %>
+
+    <!-- Main component for a primary marketing message or call to action -->
+    <div class="well search">
+        <form>
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="name" value="<%= name %>" placeholder="Name"/>
+                     <span class="input-group-btn">
+                        <button type="submit" class="btn btn-primary btn-raised">Search</button>
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Project</th>
+                <th>Created at</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (var index in solicitations) { %>
+            <% var solicitation = solicitations[index]; %>
+                <tr>
+                    <th scope="row"><%= solicitation.title %>%></th>
+                    <td><%= solicitation.project.name %></td>
+                    <td><%= solicitation.createdDate %></td>
+                    <th><a href="/admin/solicitations/<%=solicitation.id%>/evaluate">evaluate</a></th>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+</body>
+
+</html>

@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 
 var Set = require('set-component');
 var EscapeHelper = require("../helper/escape_key_helper");
-var deepEqual = require('deep-equal')
+var deepEqual = require('deep-equal');
 
 
 var ProjectSchema = new Schema({
@@ -31,7 +31,7 @@ var ProjectSchema = new Schema({
     currentMetamodel: {
         type: Schema.Types.Mixed
     }
-});
+}, { minimize: false });
 
 ProjectSchema.methods.getMetamodel = function() {
     if (this.currentMetamodel) {
@@ -66,11 +66,11 @@ ProjectSchema.methods.updateInfo = function(metamodel, model, callback) {
     this.save(function (err) {
         callback.call(this, err);
     });
-
 };
 
-
-
+ProjectSchema.methods.isMetamodelDifferentFromCurrent = function (metamodel) {
+    return !deepEqual(this.getMetamodel(), metamodel)
+};
 
 var Project = mongoose.model('Project', ProjectSchema);
 

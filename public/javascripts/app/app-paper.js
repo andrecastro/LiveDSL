@@ -4,7 +4,7 @@ define(["underscore", "joint", "custom/transform", "views/factory/component-fact
 
         var Paper = joint.dia.Paper.extend({
             options: _.extend(joint.dia.Paper.prototype.options, {
-                height: 2000,
+                height: 1000,
                 width: 2000,
                 gridSize: 1,
                 markAvailable: true,

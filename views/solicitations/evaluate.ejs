@@ -13,13 +13,13 @@
     <link rel="stylesheet" href="/vendor/jquery-ui/themes/base/dialog.css"/>
     <link rel="stylesheet" href="/stylesheets/style.css"/>
 
-    <script data-main="/javascripts/app/init" src="/vendor/requirejs/require.js"></script>
+    <script data-main="/javascripts/solicitations/init" src="/vendor/requirejs/require.js"></script>
 </head>
 
 <body class="site has-navbar-fixed-top">
 
 <script>
-    var currentProject = '<%= project.id %>';
+    var currentSolicitation = '<%= solicitation.id %>';
 </script>
 
 <%- include ../partials/_header.ejs %>
@@ -27,7 +27,6 @@
 <main id="main" role="main" class="site-content">
     <div id="center" class="ui-layout-center">
         <div id="center-title"></div>
-        <div id="solicitation-warning"></div>
 
         <div id="center-content"></div>
     </div>
@@ -39,7 +38,7 @@
 
     <div id="west" class="ui-layout-west">
         <div id="west-title">
-            Project - <%= title %>
+            Solicitation - <%= solicitation.title %>
         </div>
 
         <div id="west-content">

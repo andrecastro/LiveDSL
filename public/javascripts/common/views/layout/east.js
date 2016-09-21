@@ -16,7 +16,7 @@ define(["backbone"], function (Backbone) {
                 model: this.model
             });
 
-            smallPaper.scale(.2);
+            smallPaper.scale(.14);
             smallPaper.$el.css('pointer-events', 'none');
 
             return this;

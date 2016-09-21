@@ -114,7 +114,14 @@ define(["joint"], function (joint) {
         var index = window.pallet.indexOf(cellMetamodel);
 
         window.pallet[index] = newCellMetamodel;
-        window.west.render();
+
+        if (window.west && window.west.render) {
+            window.west.render();
+        }
+
+        if (window.center && window.center.renderSolicitationView) {
+            window.center.renderSolicitationView();
+        }
     };
 
     Pallet.prototype.deleteByComponentId = function(componentId) {
@@ -149,7 +156,7 @@ define(["joint"], function (joint) {
             newCellMetamodel.target = { id: null};
             newCellMetamodel.sourceElement = null;
             newCellMetamodel.targetElement = null;
-            newCellMetamodel.labels.splice(1, 1);
+            newCellMetamodel.labels.splice(1, 1); // TODO fix this
         } else {
             newCellMetamodel.position.x = null;
             newCellMetamodel.position.y = null;

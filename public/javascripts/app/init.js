@@ -35,11 +35,14 @@ require(["/javascripts/config.js"], function () {
     });
 
     function model() {
-        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
+        require(["app-views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
                 "app-scripts/app-paper", "app-scripts/app-graph", "app-views/toolbars/new-model-toolbar",
                 "controllers/projects"],
             function (Center, West, East, ComponentListView, AppPaper, AppGraph, Toolbar, Projects) {
+
                 var project = Projects.get();
+                window.pallet = project.metamodel;
+                window.dslMetamodel = project.dslMetamodel;
 
                 window.graph = new AppGraph();
 
@@ -56,9 +59,6 @@ require(["/javascripts/config.js"], function () {
                     paper: paper,
                     title: "MODEL"
                 }).render();
-
-                window.pallet = project.metamodel;
-                window.dslMetamodel = project.dslMetamodel;
 
                 if (project.model) {
                     window.graph.addCells(JSON.parse(project.model).cells);

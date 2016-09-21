@@ -1,25 +1,3 @@
-.cardinality {
-    position: absolute;
-    pointer-events: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-}
-
-.cardinality > div {
-    position: absolute;
-    pointer-events: auto;
-}
-
-.cardinality .value[data-position="bottom"] {
-    bottom: -20px;
-    width: 100%;
-    text-align: center;
-}
-
 .free-transform {
     position: absolute;
     pointer-events: none;

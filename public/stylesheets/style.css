@@ -1,6 +1,45 @@
 @import url('/stylesheets/transform-component.css');
 
 
+.solicitation-form .help-block {
+    font-size: 12px !important;
+}
+
+.ui-dialog {
+    z-index: 2000000000 !important;
+}
+
+.ui-dialog-buttonset button {
+    color: black !important;
+}
+
+.ui-dialog-title {
+    font-size: 16px;
+}
+
+.cardinality {
+    position: absolute;
+    pointer-events: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+.cardinality > div {
+    position: absolute;
+    pointer-events: auto;
+}
+
+.cardinality .value[data-position="bottom"] {
+    bottom: -20px;
+    width: 100%;
+    text-align: center;
+}
+
+
 #west-title {
     color: white;
     padding: 10px;

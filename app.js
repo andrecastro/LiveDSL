@@ -98,10 +98,12 @@ mongoose.set('debug', true);
 // routes
 var routes = require('./routes/index')(passport);
 var dsls = require('./routes/dsls')(passport, user);
+var solicitations = require('./routes/solicitations')(passport, user);
 var projects = require('./routes/projects')(passport);
 
 app.use('/', routes);
 app.use('/admin/dsls', dsls);
+app.use('/admin/solicitations', solicitations);
 app.use('/projects', projects);
 
 // catch 404 and forward to error handler

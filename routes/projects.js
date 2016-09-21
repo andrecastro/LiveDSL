@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Project = require('../models/project');
 var Dsl = require('../models/dsl');
+var Solicitation = require('../models/solicitation');
 
 module.exports = function (passport) {
 
@@ -111,10 +112,13 @@ module.exports = function (passport) {
                 return next(error);
             }
 
-            res.json({ model: project.model, metamodel: project.getMetamodel(), dslMetamodel: project.getDslMetamodel() });
+            res.json({
+                model: project.model,
+                metamodel: project.getMetamodel(),
+                dslMetamodel: project.getDslMetamodel()
+            });
         });
     });
-
 
     router.put("/:id/modelling", passport.isLoggedIn, function (req, res, next) {
         Project.findById(req.params.id).where('user').equals(req.user.id).populate('dsl').exec(function (err, project) {
@@ -127,6 +131,70 @@ module.exports = function (passport) {
             project.updateInfo(req.body.metamodel, req.body.model, function (err) {
                 if (err) {
                     return res.status(500);
+                }
+
+                res.sendStatus(200);
+            });
+        });
+    });
+
+    router.post("/:id/is-metamodel-different", passport.isLoggedIn, function (req, res, next) {
+        Project.findById(req.params.id).where('user').equals(req.user.id).populate('dsl').exec(function (err, project) {
+            if (err || !project) {
+                var error = new Error('Not Found');
+                error.status = 404;
+                return next(error);
+            }
+
+            res.json(project.isMetamodelDifferentFromCurrent(req.body.metamodel));
+        });
+    });
+
+    router.post("/:id/solicitation", passport.isLoggedIn, function (req, res, next) {
+        Project.findById(req.params.id).where('user').equals(req.user.id).exec(function (err, project) {
+            if (err || !project) {
+                var error = new Error('Not Found');
+                error.status = 404;
+                return next(error);
+            }
+
+            var solicitation = new Solicitation({
+                title: req.body.title,
+                description: req.body.description,
+                metamodelSnapshot: project.currentMetamodel,
+                project: project.id,
+                dsl: project.dsl,
+                status: "pending",
+                createdDate: Date.now()
+            });
+
+            solicitation.save(function (err) {
+                if (err) {
+                    res.sendStatus(500);
+                    return;
+                }
+
+                res.sendStatus(200);
+            });
+        });
+    });
+
+    router.post("/:id/metamodel-rollback", passport.isLoggedIn, function (req, res, next) {
+        Project.findById(req.params.id).where('user').equals(req.user.id).exec(function (err, project) {
+            if (err || !project) {
+                var error = new Error('Not Found');
+                error.status = 404;
+                return next(error);
+            }
+
+            project.model = req.body.model;
+            project.currentMetamodel = null;
+            project.markModified('currentMetamodel');
+
+            project.save(function (err) {
+                if (err) {
+                    res.sendStatus(500);
+                    return;
                 }
 
                 res.sendStatus(200);

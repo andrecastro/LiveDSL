@@ -83,7 +83,11 @@ define(["underscore", "backbone", "joint", "geometry", "text!admin-templates/car
                return target.id == link.get("targetElement");
             });
 
-            return targetRestriction.quantity;
+            if (targetRestriction) {
+                return targetRestriction.quantity;
+            }
+
+            return "NaN";
         }
     });
 

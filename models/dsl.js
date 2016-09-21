@@ -24,7 +24,7 @@ var DslSchema = new Schema({
     pallet: {
         type: Array
     }
-});
+}, { minimize: false });
 
 DslSchema.methods.addNewCellMetamodelToPallet = function (cell, callback) {
     try {
@@ -69,7 +69,7 @@ DslSchema.methods.updateInfo = function (info, callback) {
 DslSchema.methods.calculateMetamodel = function() {
     var metamodel = new Set();
 
-    var cells = JSON.parse(this.modelExample).cells;
+    var cells = this.getModelExampleAsObject().cells;
 
     for (var index in cells) {
         var cell = cells[index];
@@ -105,6 +105,10 @@ DslSchema.methods.getMetamodel = function () {
         });
 
     return [];
+};
+
+DslSchema.methods.getModelExampleAsObject = function () {
+    return JSON.parse(this.modelExample);
 };
 
 DslSchema.methods.getCellMetamodelByComponentId = function (componentId) {
