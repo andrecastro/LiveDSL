@@ -16,7 +16,7 @@ After installing all the pre requisites, go to the root folder and execute the f
 
 # Understanding the app
 
-
+TBD
 
 
 
