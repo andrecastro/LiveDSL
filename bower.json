@@ -18,6 +18,7 @@
     "text": "^2.0.15",
     "Backbone.Undo.js": "Backbone.Undo#^0.2.5",
     "backbone.stickit": "^0.9.2",
-    "pnotify": "^3.0.0"
+    "pnotify": "^3.0.0",
+    "jqueryui-touch-punch": "*"
   }
 }
