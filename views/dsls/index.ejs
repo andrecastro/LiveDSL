@@ -52,6 +52,7 @@
                     <div class="panel-heading">
                         <h2><strong><%= dsl.name %></strong></h2>
                         <div class="panel-actions">
+                            <a href="/admin/solicitations/dsl/<%= dsl.id %>" class="btn-close"><%= dsl.numberOfPendingSolicitations(); %></a>
                             <a href="/admin/dsls/edit/<%= dsl.id %>" class="btn-close"><i class="glyphicon glyphicon-cog"></i></a>
                             <a href="#" data-form-id="#delete-<%= dsl.id %>" class="remove btn-close">
                                 <i class="glyphicon glyphicon-trash"></i>

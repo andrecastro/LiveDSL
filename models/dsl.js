@@ -26,6 +26,16 @@ var DslSchema = new Schema({
     }
 }, { minimize: false });
 
+DslSchema.virtual('solicitations', {
+    ref: 'Solicitation',
+    localField: '_id',
+    foreignField: 'dsl'
+});
+
+DslSchema.methods.numberOfPendingSolicitations = function () {
+    return this.solicitations.filter(function (sol) { return sol.status == "pending" }).length;
+};
+
 DslSchema.methods.addNewCellMetamodelToPallet = function (cell, callback) {
     try {
         validateCell(this, cell)

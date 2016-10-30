@@ -54,7 +54,10 @@ requirejs.config({
         "admin-templates": "/javascripts/admin/templates",
 
         "app-views": "/javascripts/app/views",
-        "app-templates": "/javascripts/app/templates"
+        "app-templates": "/javascripts/app/templates",
+
+        "solicitations-views": "/javascripts/solicitations/views",
+        "solicitations-templates": "/javascripts/solicitations/templates"
 
     },
     map: {

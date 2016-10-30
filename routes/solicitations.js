@@ -8,7 +8,7 @@ module.exports = function (passport, user) {
         Solicitation
             .find({dsl: req.params.dslId, status: "pending", title: new RegExp(req.query.name, "i")})
             .sort({createdDate: -1})
-            .populate("project")
+            //.populate("project")
             .exec(function (err, solicitations) {
                 res.render('solicitations/index', {solicitations: solicitations, name: req.query.name});
             });

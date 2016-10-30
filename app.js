@@ -11,6 +11,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var ConnectRoles = require('connect-roles');
 var LocalStrategy = require('passport-local').Strategy;
+var dateFormat = require('dateformat');
 
 var app = express();
 
@@ -31,6 +32,7 @@ app.use(function (req, res, next) {
         res.locals.title = "";
     }
 
+    res.locals.dateFormat = dateFormat;
     next();
 });
 app.use(session({

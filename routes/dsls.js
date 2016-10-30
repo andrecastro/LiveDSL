@@ -5,7 +5,7 @@ var Dsl = require('../models/dsl');
 module.exports = function (passport, user) {
 
     router.get('/', passport.isLoggedIn, user.can('access admin pages'), function (req, res, next) {
-        Dsl.find({name: new RegExp(req.query.name, "i")}, function (err, dsls) {
+        Dsl.find({name: new RegExp(req.query.name, "i")}).populate("solicitations").exec(function (err, dsls) {
             res.render('dsls/index', {dsls: dsls, name: req.query.name});
         });
     });
@@ -26,7 +26,7 @@ module.exports = function (passport, user) {
             }
 
             req.flash("info", "Successfully saved");
-            res.redirect('/admin/dsls')
+            res.redirect('/admin/dsls/' + dsl.id);
         });
     });
 
@@ -61,7 +61,7 @@ module.exports = function (passport, user) {
                 }
 
                 req.flash("info", "Successfully updated");
-                res.redirect('/admin/dsls');
+                res.redirect('/admin/dsls/' + dsl.id);
             });
         });
     });

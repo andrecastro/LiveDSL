@@ -1,5 +1,8 @@
 @import url('/stylesheets/transform-component.css');
 
+.link-tools .tool-options {
+    display: flex !important;
+}
 
 .solicitation-form .help-block {
     font-size: 12px !important;

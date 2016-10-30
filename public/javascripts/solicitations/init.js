@@ -33,9 +33,10 @@ require(["/javascripts/config.js"], function () {
     });
 
     function evaluate() {
-        require(["views/layout/center", "views/layout/west", "views/layout/east", "views/component-list-view",
-                "admin-scripts/admin-graph", "admin-scripts/admin-paper", "controllers/solicitations"],
-            function (Center, West, East, ComponentListView, AdminGraph, AdminPaper, Solicitations) {
+        require(["views/layout/center", "solicitations-views/layout/west", "views/layout/east",
+                "solicitations-views/toolbars/solicitation-toolbar", "admin-scripts/admin-graph",
+                "admin-scripts/admin-paper", "controllers/solicitations"],
+            function (Center, West, East, Toolbar, AdminGraph, AdminPaper, Solicitations) {
                 var solicitation = Solicitations.get();
                 window.pallet = solicitation.metamodel;
                 window.dslMetamodel = solicitation.dslMetamodel;
@@ -52,6 +53,10 @@ require(["/javascripts/config.js"], function () {
                     compareCardinalityWithDsl: true
                 });
 
+                window.west = new West({
+                    toolbar: new Toolbar()
+                }).render();
+
                 window.center = new Center({
                     paper: paper,
                     title: "SOLICITATION EVALUATE"
@@ -60,6 +65,7 @@ require(["/javascripts/config.js"], function () {
                 if (solicitation.model) {
                     window.graph.fromJSON(solicitation.model);
                 }
+
             });
     }
 });
